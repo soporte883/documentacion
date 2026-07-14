@@ -52,6 +52,12 @@ async function ensureSchema(activePool) {
     );
 
     await activePool.query(
+      `UPDATE users
+       SET role = 'admin', is_active = TRUE
+       WHERE LOWER(email) = 'soporte@fundacionluker.org.co'`
+    );
+
+    await activePool.query(
       `CREATE TABLE IF NOT EXISTS sessions (
          id BIGSERIAL PRIMARY KEY,
          token TEXT NOT NULL UNIQUE,
