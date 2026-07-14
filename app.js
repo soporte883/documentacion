@@ -2,6 +2,7 @@ const tabs = [...document.querySelectorAll(".tab")];
 const panels = [...document.querySelectorAll(".tab-panel")];
 const adminOnlyNodes = [...document.querySelectorAll(".admin-only")];
 const searchInput = document.getElementById("globalSearch");
+const themeToggleBtn = document.getElementById("themeToggle");
 const toggleSecretsBtn = document.getElementById("toggleSecrets");
 const logoutBtn = document.getElementById("logoutBtn");
 const activeUserLabel = document.getElementById("activeUser");
@@ -22,10 +23,41 @@ const dynamicModulesMessage = document.getElementById("dynamicModulesMessage");
 const STORAGE_KEYS = {
   checklist: "doc_checklist_state",
   notes: "doc_notes_state",
+  theme: "doc_theme_mode",
 };
 
 let secretsVisible = true;
 let currentUser = null;
+
+function getPreferredTheme() {
+  const stored = localStorage.getItem(STORAGE_KEYS.theme);
+  if (stored === "light" || stored === "dark") {
+    return stored;
+  }
+
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function updateThemeButton(mode) {
+  if (!themeToggleBtn) {
+    return;
+  }
+
+  themeToggleBtn.textContent = mode === "dark" ? "Modo claro" : "Modo oscuro";
+}
+
+function applyTheme(mode) {
+  const dark = mode === "dark";
+  document.body.classList.toggle("theme-dark", dark);
+  updateThemeButton(mode);
+}
+
+function toggleTheme() {
+  const isDark = document.body.classList.contains("theme-dark");
+  const next = isDark ? "light" : "dark";
+  localStorage.setItem(STORAGE_KEYS.theme, next);
+  applyTheme(next);
+}
 
 async function ensureAuthenticated() {
   try {
@@ -432,6 +464,10 @@ tabs.forEach((tab) => {
   tab.addEventListener("click", () => activateTab(tab.dataset.tab));
 });
 
+if (themeToggleBtn) {
+  themeToggleBtn.addEventListener("click", toggleTheme);
+}
+
 searchInput.addEventListener("input", (event) => {
   applySearch(event.target.value);
 });
@@ -500,6 +536,8 @@ document.querySelectorAll(".accordion-trigger").forEach((trigger) => {
 });
 
 async function init() {
+  applyTheme(getPreferredTheme());
+
   const ok = await ensureAuthenticated();
   if (!ok) {
     return;
