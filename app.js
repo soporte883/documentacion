@@ -374,7 +374,7 @@ async function loadModules() {
   }
 
   dynamicModulesList.innerHTML = "";
-  setMessage(dynamicModulesMessage, "Cargando modulos creados por admin...");
+  setMessage(dynamicModulesMessage, "Cargando modulos...");
 
   try {
     const response = await fetch("/api/modules", {
@@ -389,7 +389,10 @@ async function loadModules() {
     }
 
     if (!data.modules.length) {
-      setMessage(dynamicModulesMessage, "Aun no hay modulos adicionales");
+      setMessage(
+        dynamicModulesMessage,
+        "Aun no hay modulos. Un admin puede crearlos desde 'Crear Modulo Nuevo'."
+      );
       return;
     }
 
@@ -397,7 +400,7 @@ async function loadModules() {
       dynamicModulesList.appendChild(renderDynamicModuleCard(moduleItem));
     });
 
-    setMessage(dynamicModulesMessage, `Modulos adicionales cargados: ${data.modules.length}`);
+    setMessage(dynamicModulesMessage, `Modulos cargados: ${data.modules.length}`);
     applySearch(searchInput.value || "");
   } catch {
     setMessage(dynamicModulesMessage, "Error de conexion al cargar modulos", true);

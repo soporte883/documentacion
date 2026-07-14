@@ -8,6 +8,7 @@
     "hash": "node scripts/hash-password.js",
     "db:setup": "node scripts/apply-schema.js",
     "seed:admin": "node scripts/seed-admin.js",
+    "seed:modules": "node scripts/seed-modules.js",
     "test": "node --test \"test/**/*.test.js\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
