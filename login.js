@@ -35,10 +35,17 @@ loginForm.addEventListener("submit", async (event) => {
       body: JSON.stringify({ email, password }),
     });
 
-    const data = await response.json();
+    let data = null;
+    try {
+      data = await response.json();
+    } catch {
+      data = null;
+    }
 
     if (!response.ok) {
-      setMessage(data.error || "No fue posible iniciar sesion", true);
+      const errorText = data?.error || "No fue posible iniciar sesion";
+      const detailText = data?.detail ? ` (${data.detail})` : "";
+      setMessage(`${errorText}${detailText}`, true);
       return;
     }
 
