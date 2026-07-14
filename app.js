@@ -2,6 +2,8 @@ const tabs = [...document.querySelectorAll(".tab")];
 const panels = [...document.querySelectorAll(".tab-panel")];
 const searchInput = document.getElementById("globalSearch");
 const toggleSecretsBtn = document.getElementById("toggleSecrets");
+const logoutBtn = document.getElementById("logoutBtn");
+const activeUserLabel = document.getElementById("activeUser");
 const secrets = [...document.querySelectorAll(".secret")];
 const copyButtons = [...document.querySelectorAll(".copy-secret")];
 const checkboxes = [...document.querySelectorAll(".checklist input[type='checkbox']")];
@@ -14,6 +16,28 @@ const STORAGE_KEYS = {
 };
 
 let secretsVisible = false;
+
+async function ensureAuthenticated() {
+  try {
+    const response = await fetch("/api/me", { credentials: "include" });
+    if (!response.ok) {
+      window.location.replace("/login.html");
+      return false;
+    }
+
+    const data = await response.json();
+    if (!data.authenticated) {
+      window.location.replace("/login.html");
+      return false;
+    }
+
+    activeUserLabel.textContent = data.user.displayName || data.user.email;
+    return true;
+  } catch {
+    window.location.replace("/login.html");
+    return false;
+  }
+}
 
 function activateTab(tabName) {
   tabs.forEach((tab) => {
@@ -126,6 +150,17 @@ toggleSecretsBtn.addEventListener("click", () => {
   renderSecrets();
 });
 
+logoutBtn.addEventListener("click", async () => {
+  try {
+    await fetch("/api/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+  } finally {
+    window.location.replace("/login.html");
+  }
+});
+
 copyButtons.forEach((button) => {
   button.addEventListener("click", async () => {
     const value = button.dataset.copy || "";
@@ -161,7 +196,16 @@ document.querySelectorAll(".accordion-trigger").forEach((trigger) => {
   });
 });
 
-loadChecklistState();
-loadNotesState();
-renderSecrets();
-updateStats();
+async function init() {
+  const ok = await ensureAuthenticated();
+  if (!ok) {
+    return;
+  }
+
+  loadChecklistState();
+  loadNotesState();
+  renderSecrets();
+  updateStats();
+}
+
+init();

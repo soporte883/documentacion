@@ -1,0 +1,27 @@
+{
+  "name": "documentacion",
+  "version": "1.0.0",
+  "description": "Portal interno de documentacion operativa por modulos:\r - Almera SGI\r - Google Forms + Apps Script\r - ClickUp",
+  "main": "app.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "hash": "node scripts/hash-password.js",
+    "test": "echo \"No tests configured\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soporte883/documentacion.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/soporte883/documentacion/issues"
+  },
+  "homepage": "https://github.com/soporte883/documentacion#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "pg": "^8.22.0"
+  }
+}

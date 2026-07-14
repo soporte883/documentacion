@@ -4,12 +4,18 @@ Portal interno de documentacion operativa por modulos:
 - Almera SGI
 - Google Forms + Apps Script
 - ClickUp
+- Login autenticado
+- Base de datos PostgreSQL
 
 ## Estructura
 
 - `index.html`: interfaz principal
+- `login.html`: pantalla de login
 - `styles.css`: estilos y diseno responsive
 - `app.js`: interactividad (tabs, busqueda, acordeones, notas locales)
+- `login.js`: flujo de autenticacion del frontend
+- `api/`: backend serverless para login/sesion en Vercel
+- `db/schema.sql`: estructura SQL para usuarios y sesiones
 - `secrets.local.json.example`: plantilla de credenciales para uso local
 - `secrets.local.json`: archivo local privado (ignorado por git)
 
@@ -21,6 +27,26 @@ Recomendado:
 1. Mantener claves en gestor de secretos.
 2. Usar variables de entorno para backend/login.
 3. Mantener `secrets.local.json` solo en local.
+
+## Configurar Base De Datos (PostgreSQL)
+
+1. Crea una base PostgreSQL (Neon, Supabase, Railway, etc.).
+2. Copia tu connection string en variable `DATABASE_URL`.
+3. Ejecuta el SQL de `db/schema.sql` en tu motor.
+4. Genera hash bcrypt para tu clave real:
+
+```bash
+npm run hash -- "TuClaveReal"
+```
+
+5. Reemplaza `REEMPLAZAR_HASH_BCRYPT` en `db/schema.sql` por el hash generado y vuelve a ejecutar el `INSERT` (o inserta manualmente).
+
+## Variables En Vercel
+
+Configura en Project Settings -> Environment Variables:
+
+- `DATABASE_URL` = cadena de conexion PostgreSQL
+- `PGSSLMODE` = `disable` (solo si tu BD local no usa SSL)
 
 ## Publicacion en Vercel
 
@@ -42,10 +68,13 @@ vercel
 vercel --prod
 ```
 
-## Proximo paso (login + BD)
+## Desarrollo local
 
-Cuando quieras activar login real:
-1. Crear backend (API routes) para autenticacion.
-2. Guardar usuarios/password hash en base de datos.
-3. Consumir API desde frontend.
-4. Cargar credenciales/strings por variables de entorno en Vercel.
+1. Copia `.env.example` como `.env` y define `DATABASE_URL`.
+2. Inicia entorno local:
+
+```bash
+npm run dev
+```
+
+3. Abre `http://localhost:3000/login.html`.

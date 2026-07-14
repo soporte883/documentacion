@@ -1,4 +1,5 @@
 # Local secrets (never commit)
+node_modules
 secrets.local.json
 .env
 .env.*
