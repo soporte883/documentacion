@@ -85,6 +85,13 @@ body {
   font-size: 0.9rem;
 }
 
+.creator-line {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: color-mix(in srgb, var(--muted) 86%, var(--ink) 14%);
+  letter-spacing: 0.02em;
+}
+
 .brand-dot {
   width: 14px;
   height: 14px;
@@ -592,6 +599,37 @@ body {
   color: var(--muted);
   text-align: center;
   font-size: 0.9rem;
+}
+
+.creator-footer {
+  margin-top: 6px;
+  font-size: 0.82rem;
+  color: color-mix(in srgb, var(--accent) 70%, var(--muted) 30%);
+  font-weight: 600;
+}
+
+.auth-topbar {
+  width: min(980px, 94vw);
+  margin: 18px auto 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 10px 14px;
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.auth-topbar-brand h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.04rem;
+}
+
+.auth-topbar-brand .creator-line {
+  margin: 2px 0 0;
+}
+
+.auth-footer {
+  padding-top: 0;
 }
 
 .auth-layout {
