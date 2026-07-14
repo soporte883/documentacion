@@ -31,6 +31,7 @@
       <span id="activeUser" class="user-pill" aria-live="polite"></span>
       <button id="themeToggle" class="btn" type="button">Modo oscuro</button>
       <button id="toggleSecrets" class="btn">Mostrar/Ocultar claves</button>
+      <button id="changePasswordBtn" class="btn" type="button">Cambiar clave</button>
       <button id="logoutBtn" class="btn">Cerrar sesion</button>
     </div>
   </header>
@@ -299,6 +300,10 @@
             <h3>Usuarios Registrados</h3>
             <button id="adminRefreshUsers" class="btn" type="button">Actualizar</button>
           </div>
+          <label class="search-wrap" for="adminUserSearch">
+            <span>Buscar usuario</span>
+            <input id="adminUserSearch" type="search" placeholder="Nombre o correo..." />
+          </label>
           <p id="adminUsersMessage" class="admin-message" aria-live="polite"></p>
           <div id="adminUsersList" class="admin-users-list"></div>
         </article>

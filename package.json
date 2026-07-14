@@ -6,7 +6,13 @@
   "scripts": {
     "dev": "vercel dev",
     "hash": "node scripts/hash-password.js",
-    "test": "echo \"No tests configured\""
+    "db:setup": "node scripts/apply-schema.js",
+    "seed:admin": "node scripts/seed-admin.js",
+    "test": "node --test \"test/**/*.test.js\"",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "repository": {
     "type": "git",
@@ -23,5 +29,10 @@
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "eslint": "^9.15.0",
+    "prettier": "^3.3.3"
   }
 }

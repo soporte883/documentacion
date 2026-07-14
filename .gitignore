@@ -5,3 +5,8 @@ secrets.local.json
 .env.*
 !.env.example
 .vercel
+.env*
+
+# Agent / skills tooling (no forma parte de la app)
+.agents/
+skills-lock.json

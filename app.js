@@ -5,6 +5,7 @@ const searchInput = document.getElementById("globalSearch");
 const themeToggleBtn = document.getElementById("themeToggle");
 const toggleSecretsBtn = document.getElementById("toggleSecrets");
 const logoutBtn = document.getElementById("logoutBtn");
+const changePasswordBtn = document.getElementById("changePasswordBtn");
 const activeUserLabel = document.getElementById("activeUser");
 const secrets = [...document.querySelectorAll(".secret")];
 const copyButtons = [...document.querySelectorAll(".copy-secret")];
@@ -15,6 +16,7 @@ const adminCreateMessage = document.getElementById("adminCreateMessage");
 const adminUsersList = document.getElementById("adminUsersList");
 const adminUsersMessage = document.getElementById("adminUsersMessage");
 const adminRefreshUsersBtn = document.getElementById("adminRefreshUsers");
+const adminUserSearchInput = document.getElementById("adminUserSearch");
 const adminCreateModuleForm = document.getElementById("adminCreateModuleForm");
 const adminModuleMessage = document.getElementById("adminModuleMessage");
 const dynamicModulesList = document.getElementById("dynamicModulesList");
@@ -125,8 +127,92 @@ function escapeHtml(value) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/\"/g, "&quot;")
+    .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+function getCookie(name) {
+  const escaped = name.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+  const match = document.cookie.match(new RegExp("(?:^|; )" + escaped + "=([^;]*)"));
+  return match ? decodeURIComponent(match[1]) : "";
+}
+
+// Cabeceras para peticiones que modifican estado (double-submit CSRF).
+function mutationHeaders(extra = {}) {
+  return {
+    "Content-Type": "application/json",
+    "x-csrf-token": getCookie("doc_csrf"),
+    ...extra,
+  };
+}
+
+// Modal reutilizable. fields: [{name,label,type,value,required,minlength}]
+function openModal(title, fields, onSubmit) {
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+
+  const rows = fields
+    .map((f) => {
+      const val = escapeHtml(f.value || "");
+      if (f.type === "textarea") {
+        return `<label>${escapeHtml(f.label)}<textarea name="${f.name}" ${f.required ? "required" : ""}>${val}</textarea></label>`;
+      }
+      if (f.type === "select") {
+        const options = (f.options || [])
+          .map(
+            (o) =>
+              `<option value="${escapeHtml(o.value)}" ${o.value === f.value ? "selected" : ""}>${escapeHtml(o.label)}</option>`
+          )
+          .join("");
+        return `<label>${escapeHtml(f.label)}<select name="${f.name}">${options}</select></label>`;
+      }
+      const min = f.minlength ? `minlength="${f.minlength}"` : "";
+      return `<label>${escapeHtml(f.label)}<input name="${f.name}" type="${f.type || "text"}" value="${val}" ${f.required ? "required" : ""} ${min} /></label>`;
+    })
+    .join("");
+
+  overlay.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true">
+      <h3>${escapeHtml(title)}</h3>
+      <form class="admin-form modal-form">
+        ${rows}
+        <p class="admin-message modal-message" aria-live="polite"></p>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost modal-cancel">Cancelar</button>
+          <button type="submit" class="btn">Guardar</button>
+        </div>
+      </form>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const form = overlay.querySelector("form");
+  const message = overlay.querySelector(".modal-message");
+  const close = () => overlay.remove();
+
+  overlay.querySelector(".modal-cancel").addEventListener("click", close);
+  overlay.addEventListener("click", (event) => {
+    if (event.target === overlay) {
+      close();
+    }
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    setMessage(message, "Guardando...");
+    try {
+      const ok = await onSubmit(data, message);
+      if (ok) {
+        close();
+      }
+    } catch {
+      setMessage(message, "Error inesperado", true);
+    }
+  });
+
+  return { close, setMessage: (t, e) => setMessage(message, t, e) };
 }
 
 function statusTextFromCode(status) {
@@ -171,7 +257,115 @@ function renderDynamicModuleCard(moduleItem) {
     </ul>
   `;
 
+  if (currentUser?.role === "admin") {
+    const actions = document.createElement("div");
+    actions.className = "admin-user-actions";
+    actions.innerHTML = `
+      <button class="btn" type="button" data-action="edit-module">Editar</button>
+      <button class="btn ghost" type="button" data-action="delete-module">Eliminar</button>
+    `;
+    actions
+      .querySelector("[data-action='edit-module']")
+      .addEventListener("click", () => openEditModuleModal(moduleItem));
+    actions
+      .querySelector("[data-action='delete-module']")
+      .addEventListener("click", () => handleDeleteModule(moduleItem));
+    card.appendChild(actions);
+  }
+
   return card;
+}
+
+function openEditModuleModal(moduleItem) {
+  openModal(
+    "Editar modulo",
+    [
+      { name: "title", label: "Titulo", value: moduleItem.title, required: true },
+      {
+        name: "description",
+        label: "Descripcion",
+        type: "textarea",
+        value: moduleItem.description,
+        required: true,
+      },
+      {
+        name: "linkUrl",
+        label: "Enlace (http/https)",
+        type: "url",
+        value: moduleItem.linkUrl,
+        required: true,
+      },
+      { name: "linkText", label: "Texto del enlace", value: moduleItem.linkText, required: true },
+      {
+        name: "detailLabel",
+        label: "Etiqueta detalle",
+        value: moduleItem.detailLabel,
+        required: true,
+      },
+      {
+        name: "detailValue",
+        label: "Valor detalle",
+        value: moduleItem.detailValue,
+        required: true,
+      },
+      { name: "usage", label: "Uso", type: "textarea", value: moduleItem.usage, required: true },
+      {
+        name: "status",
+        label: "Estado",
+        type: "select",
+        value: moduleItem.status,
+        options: [
+          { value: "ok", label: "Activo" },
+          { value: "warn", label: "Flujo" },
+          { value: "critical", label: "Critico" },
+        ],
+      },
+      { name: "tags", label: "Etiquetas (coma)", value: moduleItem.tags },
+    ],
+    async (data, setMsg) => {
+      const response = await fetch("/api/modules", {
+        method: "PATCH",
+        headers: mutationHeaders(),
+        credentials: "include",
+        body: JSON.stringify({ id: moduleItem.id, ...data }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        setMsg(result.error || "No fue posible actualizar", true);
+        return false;
+      }
+      setMessage(dynamicModulesMessage, "Modulo actualizado");
+      await loadModules();
+      return true;
+    }
+  );
+}
+
+async function handleDeleteModule(moduleItem) {
+  if (
+    !window.confirm(`Eliminar el modulo "${moduleItem.title}"? Esta accion no se puede deshacer.`)
+  ) {
+    return;
+  }
+
+  setMessage(dynamicModulesMessage, "Eliminando modulo...");
+  try {
+    const response = await fetch("/api/modules", {
+      method: "DELETE",
+      headers: mutationHeaders(),
+      credentials: "include",
+      body: JSON.stringify({ id: moduleItem.id }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setMessage(dynamicModulesMessage, result.error || "No fue posible eliminar", true);
+      return;
+    }
+    setMessage(dynamicModulesMessage, "Modulo eliminado");
+    await loadModules();
+  } catch {
+    setMessage(dynamicModulesMessage, "Error de conexion al eliminar", true);
+  }
 }
 
 async function loadModules() {
@@ -230,9 +424,7 @@ async function handleCreateModule(event) {
   try {
     const response = await fetch("/api/modules", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: mutationHeaders(),
       credentials: "include",
       body: JSON.stringify(payload),
     });
@@ -340,15 +532,24 @@ function createUserRow(user) {
 
   item.innerHTML = `
     <div>
-      <strong>${user.displayName}</strong>
-      <p>${user.email}</p>
+      <strong>${escapeHtml(user.displayName)}</strong>
+      <p>${escapeHtml(user.email)}</p>
       <p>Rol: ${user.role === "admin" ? "Administrador" : "Usuario"}</p>
     </div>
     <div class="admin-user-actions">
       <span class="chip ${user.isActive ? "ok" : "warn"}">${statusLabel}</span>
       <button class="btn" type="button" data-action="toggle" data-id="${user.id}" data-next-active="${String(!user.isActive)}">${toggleText}</button>
+      <button class="btn" type="button" data-action="edit">Editar</button>
+      <button class="btn ghost" type="button" data-action="reset">Resetear clave</button>
     </div>
   `;
+
+  item
+    .querySelector("[data-action='edit']")
+    .addEventListener("click", () => openEditUserModal(user));
+  item
+    .querySelector("[data-action='reset']")
+    .addEventListener("click", () => openResetPasswordModal(user));
 
   const toggleButton = item.querySelector("button[data-action='toggle']");
   toggleButton.addEventListener("click", async () => {
@@ -361,9 +562,7 @@ function createUserRow(user) {
     try {
       const response = await fetch("/api/users", {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: mutationHeaders(),
         credentials: "include",
         body: JSON.stringify({
           userId,
@@ -397,8 +596,11 @@ async function loadUsers() {
   adminUsersList.innerHTML = "";
   setMessage(adminUsersMessage, "Cargando usuarios...");
 
+  const search = adminUserSearchInput ? adminUserSearchInput.value.trim() : "";
+  const queryString = search ? `?search=${encodeURIComponent(search)}` : "";
+
   try {
-    const response = await fetch("/api/users", {
+    const response = await fetch(`/api/users${queryString}`, {
       method: "GET",
       credentials: "include",
     });
@@ -439,9 +641,7 @@ async function handleCreateUser(event) {
   try {
     const response = await fetch("/api/users", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: mutationHeaders(),
       credentials: "include",
       body: JSON.stringify(payload),
     });
@@ -458,6 +658,106 @@ async function handleCreateUser(event) {
   } catch {
     setMessage(adminCreateMessage, "Error de conexion al crear usuario", true);
   }
+}
+
+function openEditUserModal(user) {
+  openModal(
+    "Editar usuario",
+    [
+      { name: "displayName", label: "Nombre completo", value: user.displayName, required: true },
+      {
+        name: "role",
+        label: "Rol",
+        type: "select",
+        value: user.role,
+        options: [
+          { value: "user", label: "Usuario" },
+          { value: "admin", label: "Administrador" },
+        ],
+      },
+    ],
+    async (data, setMsg) => {
+      const response = await fetch("/api/users", {
+        method: "PATCH",
+        headers: mutationHeaders(),
+        credentials: "include",
+        body: JSON.stringify({ userId: user.id, action: "updateProfile", ...data }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        setMsg(result.error || "No fue posible actualizar", true);
+        return false;
+      }
+      setMessage(adminUsersMessage, "Usuario actualizado");
+      await loadUsers();
+      return true;
+    }
+  );
+}
+
+function openResetPasswordModal(user) {
+  openModal(
+    `Resetear clave de ${user.displayName}`,
+    [
+      {
+        name: "password",
+        label: "Nueva clave (min 8)",
+        type: "password",
+        required: true,
+        minlength: 8,
+      },
+    ],
+    async (data, setMsg) => {
+      const response = await fetch("/api/users", {
+        method: "PATCH",
+        headers: mutationHeaders(),
+        credentials: "include",
+        body: JSON.stringify({ userId: user.id, action: "resetPassword", password: data.password }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        setMsg(result.error || "No fue posible resetear", true);
+        return false;
+      }
+      setMessage(adminUsersMessage, "Clave reseteada. El usuario debera cambiarla al ingresar.");
+      return true;
+    }
+  );
+}
+
+function openChangePasswordModal(forced = false) {
+  const modal = openModal(
+    forced ? "Debes cambiar tu clave" : "Cambiar mi clave",
+    [
+      { name: "currentPassword", label: "Clave actual", type: "password", required: true },
+      {
+        name: "newPassword",
+        label: "Nueva clave (min 8)",
+        type: "password",
+        required: true,
+        minlength: 8,
+      },
+    ],
+    async (data, setMsg) => {
+      const response = await fetch("/api/change-password", {
+        method: "POST",
+        headers: mutationHeaders(),
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        setMsg(result.error || "No fue posible cambiar la clave", true);
+        return false;
+      }
+      if (currentUser) {
+        currentUser.mustChangePassword = false;
+      }
+      return true;
+    }
+  );
+
+  return modal;
 }
 
 tabs.forEach((tab) => {
@@ -522,8 +822,20 @@ if (adminRefreshUsersBtn) {
   adminRefreshUsersBtn.addEventListener("click", loadUsers);
 }
 
+if (adminUserSearchInput) {
+  let userSearchTimer;
+  adminUserSearchInput.addEventListener("input", () => {
+    clearTimeout(userSearchTimer);
+    userSearchTimer = setTimeout(loadUsers, 300);
+  });
+}
+
 if (adminCreateModuleForm) {
   adminCreateModuleForm.addEventListener("submit", handleCreateModule);
+}
+
+if (changePasswordBtn) {
+  changePasswordBtn.addEventListener("click", () => openChangePasswordModal(false));
 }
 
 document.querySelectorAll(".accordion-trigger").forEach((trigger) => {
@@ -554,6 +866,10 @@ async function init() {
 
   if (isAdmin) {
     await loadUsers();
+  }
+
+  if (currentUser?.mustChangePassword) {
+    openChangePasswordModal(true);
   }
 }
 

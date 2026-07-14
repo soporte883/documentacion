@@ -10,8 +10,15 @@ function notAllowed(res, method = "POST") {
 }
 
 async function readJsonBody(req) {
+  const MAX_BODY_BYTES = 1_000_000; // 1 MB
   const chunks = [];
+  let total = 0;
+
   for await (const chunk of req) {
+    total += chunk.length;
+    if (total > MAX_BODY_BYTES) {
+      return null;
+    }
     chunks.push(chunk);
   }
 

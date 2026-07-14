@@ -4,7 +4,7 @@ async function main() {
   const password = process.argv[2];
 
   if (!password) {
-    console.error("Uso: npm run hash -- \"TuClave\"");
+    console.error('Uso: npm run hash -- "TuClave"');
     process.exit(1);
   }
 

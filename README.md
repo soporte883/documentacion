@@ -1,6 +1,7 @@
 # Documentacion Soporte - Fundacion Luker
 
 Portal interno de documentacion operativa por modulos:
+
 - Almera SGI
 - Google Forms + Apps Script
 - ClickUp
@@ -25,26 +26,43 @@ Portal interno de documentacion operativa por modulos:
 
 No subir credenciales reales al repositorio.
 
+Medidas implementadas:
+
+- Contrasenas con hash bcrypt (nunca en texto plano).
+- Rate limiting en el login (bloqueo temporal tras varios intentos fallidos).
+- Proteccion CSRF (double-submit cookie) en todas las acciones que modifican datos.
+- Cookies de sesion `HttpOnly` + `SameSite=Lax` y `Secure` en produccion.
+- Limpieza automatica de sesiones expiradas e intentos de login antiguos.
+- Validacion de entrada y bloqueo de URLs peligrosas (solo http/https) para evitar XSS.
+- Auditoria de acciones sensibles en la tabla `audit_logs`.
+- Cabeceras de seguridad HTTP (CSP, HSTS, X-Frame-Options, etc.) via `vercel.json`.
+- El administrador se siembra con `npm run seed:admin` usando variables de entorno; no hay claves en el repo.
+
 Recomendado:
+
 1. Mantener claves en gestor de secretos.
 2. Usar variables de entorno para backend/login.
-3. Mantener `secrets.local.json` solo en local.
+3. Nunca commitear `.env.local` ni `secrets.local.json`.
 
 ## Configurar Base De Datos (PostgreSQL)
 
 1. Crea una base PostgreSQL (Neon, Supabase, Railway, etc.).
-2. Copia tu connection string en variable `DATABASE_URL`.
-3. Ejecuta el SQL de `db/schema.sql` en tu motor.
-4. Genera hash bcrypt para tu clave real:
+2. Copia `.env.example` a `.env.local` y define `DATABASE_URL`, `ADMIN_EMAIL` y `ADMIN_PASSWORD`.
+3. Aplica el esquema:
 
 ```bash
-npm run hash -- "TuClaveReal"
+npm run db:setup
 ```
 
-5. Reemplaza `REEMPLAZAR_HASH_BCRYPT` en `db/schema.sql` por el hash generado y vuelve a ejecutar el `INSERT` (o inserta manualmente).
+4. Siembra (o actualiza) el usuario administrador de forma segura:
 
-Nota: el esquema actual incluye columnas `role` e `is_active` en la tabla `users`. Si ya tenias una base creada, vuelve a correr `db/schema.sql` para aplicar estos cambios.
-Nota: el esquema tambien incluye la tabla `modules` para guardar modulos creados por administrador.
+```bash
+npm run seed:admin
+```
+
+Esto toma `ADMIN_EMAIL`, `ADMIN_NAME` y `ADMIN_PASSWORD` desde `.env.local` y guarda la clave con hash bcrypt. No se guardan claves en texto plano en el repositorio.
+
+Nota: el esquema incluye columnas `role`, `is_active` y `must_change_password` en `users`, la tabla `modules`, ademas de `login_attempts` (rate limiting) y `audit_logs` (auditoria). Si ya tenias una base creada, vuelve a correr `npm run db:setup` para aplicar los cambios de forma incremental.
 
 ## Variables En Vercel
 
@@ -75,7 +93,7 @@ vercel --prod
 
 ## Desarrollo local
 
-1. Copia `.env.example` como `.env` y define `DATABASE_URL`.
+1. Copia `.env.example` como `.env.local` y define `DATABASE_URL` (y `ADMIN_EMAIL`/`ADMIN_PASSWORD` si vas a sembrar el admin).
 2. Inicia entorno local:
 
 ```bash
@@ -88,12 +106,35 @@ npm run dev
 
 - Solo usuarios con rol `admin` pueden ver la pestaña `Admin Usuarios`.
 - Desde esa pestaña se puede:
-	- Crear usuarios nuevos (correo, nombre, clave inicial y rol).
-	- Activar/Inactivar usuarios existentes.
+  - Crear usuarios nuevos (correo, nombre, clave inicial y rol).
+  - Editar nombre y rol de un usuario existente.
+  - Resetear la clave de un usuario.
+  - Activar/Inactivar usuarios existentes.
+  - Buscar usuarios por nombre o correo (busqueda en el servidor).
 - Los usuarios inactivos no pueden iniciar sesion.
 
 ## Gestion De Modulos (Admin)
 
-- Solo usuarios `admin` pueden crear modulos nuevos.
+- Solo usuarios `admin` pueden crear, editar y eliminar modulos.
 - Los modulos se guardan en base de datos y se muestran en la pestana `Modulos` para todos los usuarios autenticados.
 - Campos incluidos: titulo, descripcion, enlace, etiqueta/valor de detalle, uso, estado visual y tags de busqueda.
+- Desde cada tarjeta de modulo dinamico, un admin puede usar los botones **Editar** y **Eliminar**.
+
+## Cambio De Contrasena
+
+- Cualquier usuario autenticado puede cambiar su clave con el boton **Cambiar clave** (barra superior).
+- Los usuarios nuevos y aquellos a quienes un admin les reseteo la clave deben cambiarla en el primer ingreso (se solicita automaticamente).
+- Un admin puede resetear la clave de cualquier usuario desde **Admin Usuarios** (boton **Resetear clave**); esto cierra las sesiones activas de ese usuario.
+
+> Nota: la recuperacion self-service por correo ("olvide mi clave") requiere configurar un proveedor de email (SMTP) y no esta incluida. El flujo soportado es el reset por administrador.
+
+## Calidad Y Pruebas
+
+```bash
+npm test          # tests unitarios (node:test)
+npm run lint      # ESLint
+npm run format    # Prettier (formatea)
+npm run format:check
+```
+
+El workflow de GitHub Actions en `.github/workflows/ci.yml` corre lint, formato y tests en cada push/PR a `main`.

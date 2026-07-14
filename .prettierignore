@@ -1,0 +1,11 @@
+node_modules
+.vercel
+.agents
+skills-lock.json
+package-lock.json
+*.min.js
+
+# Archivos existentes que no queremos reformatear masivamente
+*.html
+*.css
+db/**

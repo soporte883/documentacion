@@ -52,6 +52,11 @@ async function ensureSchema(activePool) {
     );
 
     await activePool.query(
+      `ALTER TABLE users
+       ADD COLUMN IF NOT EXISTS must_change_password BOOLEAN NOT NULL DEFAULT FALSE`
+    );
+
+    await activePool.query(
       `UPDATE users
        SET role = 'admin', is_active = TRUE
        WHERE LOWER(email) = 'soporte@fundacionluker.org.co'`
@@ -68,8 +73,11 @@ async function ensureSchema(activePool) {
     );
 
     await activePool.query(
-      `CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token)`
+      `ALTER TABLE sessions
+       ADD COLUMN IF NOT EXISTS csrf_token TEXT`
     );
+
+    await activePool.query(`CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token)`);
 
     await activePool.query(
       `CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at)`
@@ -95,6 +103,42 @@ async function ensureSchema(activePool) {
 
     await activePool.query(
       `CREATE INDEX IF NOT EXISTS idx_modules_created_at ON modules(created_at DESC)`
+    );
+
+    await activePool.query(
+      `ALTER TABLE modules
+       ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()`
+    );
+
+    await activePool.query(
+      `CREATE TABLE IF NOT EXISTS login_attempts (
+         id BIGSERIAL PRIMARY KEY,
+         email TEXT NOT NULL,
+         ip TEXT NOT NULL DEFAULT '',
+         success BOOLEAN NOT NULL DEFAULT FALSE,
+         attempted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+       )`
+    );
+
+    await activePool.query(
+      `CREATE INDEX IF NOT EXISTS idx_login_attempts_lookup
+       ON login_attempts(email, ip, attempted_at)`
+    );
+
+    await activePool.query(
+      `CREATE TABLE IF NOT EXISTS audit_logs (
+         id BIGSERIAL PRIMARY KEY,
+         actor_user_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
+         actor_email TEXT NOT NULL DEFAULT '',
+         action TEXT NOT NULL,
+         target TEXT NOT NULL DEFAULT '',
+         detail TEXT NOT NULL DEFAULT '',
+         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+       )`
+    );
+
+    await activePool.query(
+      `CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at DESC)`
     );
   })();
 

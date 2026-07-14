@@ -21,6 +21,7 @@ module.exports = async function handler(req, res) {
         displayName: user.display_name,
         role: user.role,
         isActive: user.is_active,
+        mustChangePassword: user.must_change_password,
       },
     });
   } catch (error) {
