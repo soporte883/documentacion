@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manual del Practicante</title>
+  <meta name="description" content="Portal interno para documentar procesos, accesos y traspaso de conocimiento." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-dot"></div>
+      <div>
+        <h1>Playbook Soporte - Fundacion Luker</h1>
+        <p>Documentacion operativa por modulos: Almera, Google Forms/App Script y ClickUp</p>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <label class="search-wrap" for="globalSearch">
+        <span>Buscar</span>
+        <input id="globalSearch" type="search" placeholder="Ej: Almera, Forms, ClickUp, soporte..." />
+      </label>
+      <button id="toggleSecrets" class="btn">Mostrar/Ocultar claves</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel stats" aria-label="Resumen">
+      <h2>Estado General</h2>
+      <div class="stat-grid">
+        <article>
+          <strong id="countProcesses">0</strong>
+          <span>Procesos</span>
+        </article>
+        <article>
+          <strong id="countAccess">0</strong>
+          <span>Accesos</span>
+        </article>
+        <article>
+          <strong id="countPending">0</strong>
+          <span>Pendientes</span>
+        </article>
+      </div>
+
+      <div class="checklist">
+        <h3>Checklist de Entrega</h3>
+        <label><input type="checkbox" data-task="correo" /> Correos institucionales validados</label>
+        <label><input type="checkbox" data-task="almera" /> Acceso a Almera confirmado</label>
+        <label><input type="checkbox" data-task="forms" /> Formulario y App Script abiertos</label>
+        <label><input type="checkbox" data-task="clickup" /> Vista de ClickUp operativa</label>
+      </div>
+
+      <div class="security-note">
+        <h3>Publicacion Segura</h3>
+        <p>Si subes esto a GitHub y Vercel, no publiques claves reales en el HTML. Usa placeholders y guarda claves en un gestor seguro.</p>
+      </div>
+    </aside>
+
+    <section class="panel content" aria-label="Contenido principal">
+      <nav class="tabs" aria-label="Secciones">
+        <button class="tab active" data-tab="modulos">Modulos</button>
+        <button class="tab" data-tab="procesos">Paso a Paso</button>
+        <button class="tab" data-tab="accesos">Accesos</button>
+        <button class="tab" data-tab="incidentes">Incidentes Frecuentes</button>
+      </nav>
+
+      <div id="modulos" class="tab-panel active">
+        <article class="card searchable module-card" data-tags="almera sgi seguimiento">
+          <div class="card-head">
+            <div class="title-wrap">
+              <span class="logo-badge almera">A</span>
+              <h3>Modulo Almera SGI</h3>
+            </div>
+            <span class="chip critical">Critico</span>
+          </div>
+          <p>Plataforma principal donde se realiza el seguimiento y gestion operativa.</p>
+          <ul class="kv-list">
+            <li><strong>Enlace:</strong> <a href="https://sgi.almeraim.com/sgi/seguimiento/?nosgim&c=sgifunluker" target="_blank" rel="noreferrer">Abrir Almera SGI</a></li>
+            <li><strong>Conexion:</strong> sgifunluker</li>
+          </ul>
+        </article>
+
+        <article class="card searchable module-card" data-tags="google forms appscript formulario lukerforma">
+          <div class="card-head">
+            <div class="title-wrap">
+              <span class="logo-badge forms">G</span>
+              <h3>Modulo Google Form + App Script</h3>
+            </div>
+            <span class="chip ok">Activo</span>
+          </div>
+          <p>Formulario creado para recepcion de solicitudes y automatizacion con Apps Script.</p>
+          <ul class="kv-list">
+            <li><strong>Enlace:</strong> <a href="https://docs.google.com/forms/d/1cYfzVeotivUyjNZNIFEqflQlmOhGT1rNoTUGXvY2LMk/edit" target="_blank" rel="noreferrer">Abrir Google Form</a></li>
+            <li><strong>Cuenta:</strong> Lukerformare@gmail.com</li>
+          </ul>
+        </article>
+
+        <article class="card searchable module-card" data-tags="clickup tickets solicitudes soporte">
+          <div class="card-head">
+            <div class="title-wrap">
+              <span class="logo-badge clickup">C</span>
+              <h3>Modulo ClickUp Soporte</h3>
+            </div>
+            <span class="chip warn">Flujo</span>
+          </div>
+          <p>Bandeja donde llegan solicitudes enviadas desde el formulario de Google.</p>
+          <ul class="kv-list">
+            <li><strong>Enlace:</strong> <a href="https://app.clickup.com/90171139829/v/b/6-901712948322-2" target="_blank" rel="noreferrer">Abrir tablero ClickUp</a></li>
+            <li><strong>Uso:</strong> Atender tickets, actualizar estado y registrar solucion.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div id="procesos" class="tab-panel">
+        <article class="card searchable" data-tags="almera ingreso login conexion soporte">
+          <div class="card-head">
+            <h3>Paso a Paso: Acceso a Almera</h3>
+            <span class="chip ok">Documentado</span>
+          </div>
+          <ol>
+            <li>Abrir el enlace de Almera SGI desde el modulo.</li>
+            <li>Confirmar que la conexion sea <strong>sgifunluker</strong>.</li>
+            <li>Ingresar correo de soporte y clave operativa.</li>
+            <li>Validar que cargue el panel de seguimiento sin errores.</li>
+          </ol>
+          <textarea class="notes" placeholder="Notas del acceso en Almera..."></textarea>
+        </article>
+
+        <article class="card searchable" data-tags="google form editar appscript automatizacion">
+          <div class="card-head">
+            <h3>Paso a Paso: Abrir Formulario y App Script</h3>
+            <span class="chip ok">Clave</span>
+          </div>
+          <ol>
+            <li>Abrir el enlace de Google Form en modo edicion.</li>
+            <li>Iniciar sesion con la cuenta del formulario.</li>
+            <li>En el formulario, ir a <strong>Extensiones</strong> y seleccionar <strong>Apps Script</strong>.</li>
+            <li>Verificar scripts, activadores y ultima ejecucion.</li>
+            <li>Si modificas algo, guardar, probar envio y revisar salida en ClickUp.</li>
+          </ol>
+          <textarea class="notes" placeholder="Notas de Apps Script y pruebas..."></textarea>
+        </article>
+
+        <article class="card searchable" data-tags="clickup tickets solicitudes soporte flujo">
+          <div class="card-head">
+            <h3>Paso a Paso: Gestion de Solicitudes en ClickUp</h3>
+            <span class="chip warn">Operacion</span>
+          </div>
+          <ol>
+            <li>Abrir el tablero de ClickUp del area de soporte.</li>
+            <li>Filtrar por solicitudes nuevas y prioridad.</li>
+            <li>Asignar responsable y fecha compromiso.</li>
+            <li>Actualizar estados: Nuevo, En proceso, Resuelto.</li>
+            <li>Registrar comentario final y evidencias de solucion.</li>
+          </ol>
+          <textarea class="notes" placeholder="Notas de gestion en ClickUp..."></textarea>
+        </article>
+      </div>
+
+      <div id="accesos" class="tab-panel">
+        <article class="card searchable" data-tags="fundacion luker practicantesena correo principal">
+          <div class="card-head">
+            <h3>Correo Practicante SENA</h3>
+            <span class="chip ok">Cuenta</span>
+          </div>
+          <ul class="kv-list">
+            <li><strong>Correo:</strong> practicantesena@fundacionluker.org.co</li>
+            <li><strong>Clave:</strong> <span class="secret" data-secret="NO_PUBLICAR_EN_REPO">••••••••••••</span>
+              <button class="mini copy-secret" data-copy="NO_PUBLICAR_EN_REPO">Copiar</button>
+            </li>
+            <li><strong>Uso:</strong> Cuenta de trabajo del practicante.</li>
+          </ul>
+        </article>
+
+        <article class="card searchable" data-tags="soporte fundacion luker correo operativo">
+          <div class="card-head">
+            <h3>Correo de Soporte</h3>
+            <span class="chip critical">Critico</span>
+          </div>
+          <ul class="kv-list">
+            <li><strong>Correo:</strong> soporte@fundacionluker.org.co</li>
+            <li><strong>Clave:</strong> <span class="secret" data-secret="NO_PUBLICAR_EN_REPO">••••••••••••</span>
+              <button class="mini copy-secret" data-copy="NO_PUBLICAR_EN_REPO">Copiar</button>
+            </li>
+            <li><strong>Relacion:</strong> Usado para acceso a Almera y gestion de casos.</li>
+          </ul>
+        </article>
+
+        <article class="card searchable" data-tags="google forms lukerformare appscript">
+          <div class="card-head">
+            <h3>Cuenta Google Forms</h3>
+            <span class="chip ok">Activo</span>
+          </div>
+          <ul class="kv-list">
+            <li><strong>Correo:</strong> Lukerformare@gmail.com</li>
+            <li><strong>Clave:</strong> <span class="secret" data-secret="NO_PUBLICAR_EN_REPO">••••••••••••</span>
+              <button class="mini copy-secret" data-copy="NO_PUBLICAR_EN_REPO">Copiar</button>
+            </li>
+            <li><strong>Uso:</strong> Edicion de Google Form y Apps Script.</li>
+          </ul>
+        </article>
+
+        <article class="card searchable" data-tags="monitoreo alertas funluker">
+          <div class="card-head">
+            <h3>Cuenta Monitoreo</h3>
+            <span class="chip warn">Infra</span>
+          </div>
+          <ul class="kv-list">
+            <li><strong>Correo:</strong> monitoreo@funluker.org.co</li>
+            <li><strong>Clave:</strong> <span class="secret" data-secret="NO_PUBLICAR_EN_REPO">••••••••••••</span>
+              <button class="mini copy-secret" data-copy="NO_PUBLICAR_EN_REPO">Copiar</button>
+            </li>
+            <li><strong>Uso:</strong> Seguimiento de estado y alertas.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div id="incidentes" class="tab-panel">
+        <article class="accordion searchable" data-tags="almera no ingresa login soporte">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span>No puedo entrar a Almera</span>
+            <span>+</span>
+          </button>
+          <div class="accordion-content">
+            <ol>
+              <li>Confirmar que estas usando el enlace correcto de SGI.</li>
+              <li>Verificar la conexion sgifunluker en la pantalla de acceso.</li>
+              <li>Validar correo de soporte y clave actualizada.</li>
+              <li>Si persiste, escalar al administrador de plataforma.</li>
+            </ol>
+          </div>
+        </article>
+
+        <article class="accordion searchable" data-tags="forms script error clickup no llegan solicitudes">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span>El formulario envia pero no llega nada a ClickUp</span>
+            <span>+</span>
+          </button>
+          <div class="accordion-content">
+            <ol>
+              <li>Entrar a Apps Script desde Extensiones en Google Form.</li>
+              <li>Ejecutar prueba manual y revisar registros de ejecucion.</li>
+              <li>Verificar token o webhook configurado para ClickUp.</li>
+              <li>Probar nuevamente con un envio de formulario controlado.</li>
+            </ol>
+          </div>
+        </article>
+
+        <article class="accordion searchable" data-tags="cuentas bloqueo acceso correo">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span>Cuenta bloqueada o clave vencida</span>
+            <span>+</span>
+          </button>
+          <div class="accordion-content">
+            <ol>
+              <li>Intentar recuperacion por correo alterno autorizado.</li>
+              <li>Si no hay acceso, solicitar reset al responsable del sistema.</li>
+              <li>Actualizar registro interno de cambio de clave.</li>
+              <li>Confirmar acceso y documentar fecha de renovacion.</li>
+            </ol>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Tip de seguridad: para deploy en Vercel, mantén claves reales fuera del repositorio y registra solo el procedimiento de acceso.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
