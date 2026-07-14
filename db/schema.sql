@@ -17,11 +17,14 @@ CREATE TABLE IF NOT EXISTS sessions (
 CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token);
 CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at);
 
--- Reemplaza el hash con uno generado para tu clave real.
+-- Clave actual configurada para login: soporte123
 INSERT INTO users (email, display_name, password_hash)
 VALUES (
   'soporte@fundacionluker.org.co',
   'Soporte Fundacion Luker',
-  '$2b$12$REEMPLAZAR_HASH_BCRYPT'
+  '$2b$12$eh0p9tZDUhc7zTfXWVNTMO/f/D07xWp0kYmsVSLNDAt6/TwgKEqJC'
 )
-ON CONFLICT (email) DO NOTHING;
+ON CONFLICT (email) DO UPDATE
+SET
+  display_name = EXCLUDED.display_name,
+  password_hash = EXCLUDED.password_hash;
