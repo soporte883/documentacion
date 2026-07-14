@@ -87,9 +87,11 @@ body {
 
 .creator-line {
   margin-top: 6px;
-  font-size: 0.8rem;
-  color: color-mix(in srgb, var(--muted) 86%, var(--ink) 14%);
-  letter-spacing: 0.02em;
+  font-size: 0.76rem;
+  color: color-mix(in srgb, var(--muted) 84%, var(--ink) 16%);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .brand-dot {
@@ -603,9 +605,11 @@ body {
 
 .creator-footer {
   margin-top: 6px;
-  font-size: 0.82rem;
-  color: color-mix(in srgb, var(--accent) 70%, var(--muted) 30%);
+  font-size: 0.78rem;
+  color: color-mix(in srgb, var(--accent) 62%, var(--muted) 38%);
   font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .auth-topbar {
