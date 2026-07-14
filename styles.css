@@ -13,17 +13,17 @@
 }
 
 body.theme-dark {
-  --bg: #081117;
-  --bg-alt: #10212c;
-  --ink: #e8f2fb;
-  --muted: #a7bdcf;
-  --card: rgba(12, 24, 33, 0.78);
-  --line: rgba(145, 180, 208, 0.25);
-  --accent: #2ec08a;
-  --accent-2: #ffc34d;
-  --critical: #ff8a8a;
+  --bg: #101922;
+  --bg-alt: #172532;
+  --ink: #dbe7f2;
+  --muted: #9db0c2;
+  --card: rgba(19, 31, 42, 0.8);
+  --line: rgba(145, 180, 208, 0.18);
+  --accent: #58b395;
+  --accent-2: #d3ad72;
+  --critical: #ef9d9d;
   --shadow: 0 20px 42px rgba(0, 0, 0, 0.42);
-  --glow: rgba(46, 192, 138, 0.33);
+  --glow: rgba(88, 179, 149, 0.24);
 }
 
 * {
@@ -666,21 +666,76 @@ body {
 }
 
 body.theme-dark .security-note {
-  border-color: rgba(255, 120, 120, 0.45);
-  background: rgba(255, 120, 120, 0.12);
+  border-color: rgba(239, 157, 157, 0.35);
+  background: rgba(239, 157, 157, 0.1);
 }
 
 body.theme-dark .security-note p {
-  color: #ffd3d3;
+  color: #f2cbcb;
 }
 
 body.theme-dark .secret.revealed {
-  color: #defff0;
-  background: rgba(46, 192, 138, 0.17);
+  color: #dcf7ec;
+  background: rgba(88, 179, 149, 0.2);
 }
 
 body.theme-dark .logo-badge.dynamic {
-  background: linear-gradient(135deg, #22d3ee, #0ea5e9);
+  background: linear-gradient(135deg, #4ec6de, #4185df);
+}
+
+body.theme-dark {
+  background: radial-gradient(circle at 8% 10%, #1a2a37 0%, #101922 42%, #162635 100%);
+}
+
+body.theme-dark .bg-grid {
+  opacity: 0.45;
+}
+
+body.theme-dark .user-pill {
+  background: rgba(88, 179, 149, 0.16);
+  color: #d8f2e8;
+}
+
+body.theme-dark .chip.ok {
+  background: rgba(88, 179, 149, 0.2);
+  color: #cff1e3;
+}
+
+body.theme-dark .chip.warn {
+  background: rgba(211, 173, 114, 0.2);
+  color: #f3dfbd;
+}
+
+body.theme-dark .chip.critical {
+  background: rgba(239, 157, 157, 0.2);
+  color: #ffd8d8;
+}
+
+body.theme-dark .tab.active {
+  color: #102019;
+}
+
+body.theme-dark .runbook-item {
+  border-color: rgba(145, 180, 208, 0.2);
+  background: rgba(20, 34, 46, 0.92);
+}
+
+body.theme-dark .step-flow li {
+  background: linear-gradient(130deg, rgba(20, 33, 45, 0.95), rgba(23, 39, 53, 0.82));
+}
+
+body.theme-dark .admin-user-item {
+  background: rgba(20, 34, 46, 0.92);
+}
+
+body.theme-dark .auth-message,
+body.theme-dark .admin-message {
+  color: #bedccc;
+}
+
+body.theme-dark .auth-message.error,
+body.theme-dark .admin-message.error {
+  color: #efb1b1;
 }
 
 @keyframes pulse-grid {
