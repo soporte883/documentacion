@@ -70,6 +70,7 @@
         <button class="tab active" data-tab="modulos">Modulos</button>
         <button class="tab" data-tab="procesos">Paso a Paso</button>
         <button class="tab" data-tab="accesos">Accesos</button>
+        <button class="tab admin-only" data-tab="admin" hidden>Admin Usuarios</button>
         <button class="tab" data-tab="incidentes">Incidentes Frecuentes</button>
       </nav>
 
@@ -100,7 +101,7 @@
           <p>Formulario creado para recepcion de solicitudes y automatizacion con Apps Script.</p>
           <ul class="kv-list">
             <li><strong>Enlace:</strong> <a href="https://docs.google.com/forms/d/1cYfzVeotivUyjNZNIFEqflQlmOhGT1rNoTUGXvY2LMk/edit" target="_blank" rel="noreferrer">Abrir Google Form</a></li>
-            <li><strong>Cuenta:</strong> Lukerformare@gmail.com</li>
+            <li><strong>Cuenta:</strong> Usar la cuenta autorizada del formulario (ver seccion Accesos).</li>
           </ul>
         </article>
 
@@ -118,6 +119,15 @@
             <li><strong>Uso:</strong> Atender tickets, actualizar estado y registrar solucion.</li>
           </ul>
         </article>
+
+        <section class="dynamic-modules-wrap" aria-label="Modulos agregados por administrador">
+          <div class="card-head">
+            <h3>Modulos Agregados Por Admin</h3>
+            <span class="chip ok">Dinamico</span>
+          </div>
+          <p id="dynamicModulesMessage" class="admin-message" aria-live="polite"></p>
+          <div id="dynamicModulesList" class="dynamic-modules-list"></div>
+        </section>
       </div>
 
       <div id="procesos" class="tab-panel">
@@ -142,7 +152,7 @@
           </div>
           <ol>
             <li>Abrir el enlace de Google Form en modo edicion.</li>
-            <li>Iniciar sesion con la cuenta del formulario.</li>
+            <li>Iniciar sesion con la cuenta autorizada para el formulario.</li>
             <li>En el formulario, ir a <strong>Extensiones</strong> y seleccionar <strong>Apps Script</strong>.</li>
             <li>Verificar scripts, activadores y ultima ejecucion.</li>
             <li>Si modificas algo, guardar, probar envio y revisar salida en ClickUp.</li>
@@ -164,6 +174,23 @@
           </ol>
           <textarea class="notes" placeholder="Notas de gestion en ClickUp..."></textarea>
         </article>
+
+        <article class="card searchable" data-tags="clickup api token key integration webhook env var">
+          <div class="card-head">
+            <h3>Paso a Paso: Configurar API de ClickUp</h3>
+            <span class="chip critical">Integracion</span>
+          </div>
+          <ol>
+            <li>Entrar a ClickUp con la cuenta administradora del espacio.</li>
+            <li>Ir a <strong>Settings &gt; Apps</strong> (o <strong>Integrations</strong>) y generar el <strong>API Token</strong>.</li>
+            <li>Copiar el token una sola vez y guardarlo en gestor de secretos interno.</li>
+            <li>En Vercel, abrir el proyecto y crear variable <strong>CLICKUP_API_TOKEN</strong> para Production, Preview y Development.</li>
+            <li>Guardar tambien <strong>CLICKUP_LIST_ID</strong> y <strong>CLICKUP_TEAM_ID</strong> como variables de entorno.</li>
+            <li>Probar con solicitud de prueba y validar que cree/actualice tarea en la lista correcta.</li>
+          </ol>
+          <p><strong>Donde debe estar:</strong> el token debe vivir en variables de entorno del backend, nunca en HTML ni JavaScript del cliente.</p>
+          <textarea class="notes" placeholder="Notas del token API, IDs y responsable..."></textarea>
+        </article>
       </div>
 
       <div id="accesos" class="tab-panel">
@@ -174,8 +201,8 @@
           </div>
           <ul class="kv-list">
             <li><strong>Correo:</strong> practicantesena@fundacionluker.org.co</li>
-            <li><strong>Clave:</strong> <span class="secret" data-secret="NO_PUBLICAR_EN_REPO">••••••••••••</span>
-              <button class="mini copy-secret" data-copy="NO_PUBLICAR_EN_REPO">Copiar</button>
+            <li><strong>Clave:</strong> <span class="secret" data-secret="Tomasob12">••••••••••••</span>
+              <button class="mini copy-secret" data-copy="Tomasob12">Copiar</button>
             </li>
             <li><strong>Uso:</strong> Cuenta de trabajo del practicante.</li>
           </ul>
@@ -188,24 +215,24 @@
           </div>
           <ul class="kv-list">
             <li><strong>Correo:</strong> soporte@fundacionluker.org.co</li>
-            <li><strong>Clave:</strong> <span class="secret" data-secret="NO_PUBLICAR_EN_REPO">••••••••••••</span>
-              <button class="mini copy-secret" data-copy="NO_PUBLICAR_EN_REPO">Copiar</button>
+            <li><strong>Clave:</strong> <span class="secret" data-secret="SoporTApr2026.">••••••••••••</span>
+              <button class="mini copy-secret" data-copy="SoporTApr2026.">Copiar</button>
             </li>
             <li><strong>Relacion:</strong> Usado para acceso a Almera y gestion de casos.</li>
           </ul>
         </article>
 
-        <article class="card searchable" data-tags="google forms lukerformare appscript">
+        <article class="card searchable" data-tags="tablets correo lukerformare dispositivos">
           <div class="card-head">
-            <h3>Cuenta Google Forms</h3>
+            <h3>Correo Tablets</h3>
             <span class="chip ok">Activo</span>
           </div>
           <ul class="kv-list">
             <li><strong>Correo:</strong> Lukerformare@gmail.com</li>
-            <li><strong>Clave:</strong> <span class="secret" data-secret="NO_PUBLICAR_EN_REPO">••••••••••••</span>
-              <button class="mini copy-secret" data-copy="NO_PUBLICAR_EN_REPO">Copiar</button>
+            <li><strong>Clave:</strong> <span class="secret" data-secret="formareatal48">••••••••••••</span>
+              <button class="mini copy-secret" data-copy="formareatal48">Copiar</button>
             </li>
-            <li><strong>Uso:</strong> Edicion de Google Form y Apps Script.</li>
+            <li><strong>Uso:</strong> Gestion de tablets y procesos asociados a dispositivos.</li>
           </ul>
         </article>
 
@@ -216,15 +243,133 @@
           </div>
           <ul class="kv-list">
             <li><strong>Correo:</strong> monitoreo@funluker.org.co</li>
-            <li><strong>Clave:</strong> <span class="secret" data-secret="NO_PUBLICAR_EN_REPO">••••••••••••</span>
-              <button class="mini copy-secret" data-copy="NO_PUBLICAR_EN_REPO">Copiar</button>
+            <li><strong>Clave:</strong> <span class="secret" data-secret="M0n1T0r302025*">••••••••••••</span>
+              <button class="mini copy-secret" data-copy="M0n1T0r302025*">Copiar</button>
             </li>
             <li><strong>Uso:</strong> Seguimiento de estado y alertas.</li>
           </ul>
         </article>
+
+        <article class="card searchable" data-tags="clickup api token env var list id team id">
+          <div class="card-head">
+            <h3>Datos Tecnicos API ClickUp</h3>
+            <span class="chip critical">Backend</span>
+          </div>
+          <ul class="kv-list">
+            <li><strong>Token API:</strong> Guardar en <strong>CLICKUP_API_TOKEN</strong> (Vercel Environment Variables).</li>
+            <li><strong>List ID:</strong> Guardar en <strong>CLICKUP_LIST_ID</strong>.</li>
+            <li><strong>Team ID:</strong> Guardar en <strong>CLICKUP_TEAM_ID</strong>.</li>
+            <li><strong>Webhook Secret:</strong> Guardar en <strong>CLICKUP_WEBHOOK_SECRET</strong> si aplica.</li>
+            <li><strong>Regla:</strong> Nunca exponer token en frontend ni repositorio.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div id="admin" class="tab-panel admin-only" hidden>
+        <article class="card searchable" data-tags="admin usuarios crear activar inactivar">
+          <div class="card-head">
+            <h3>Crear Usuario</h3>
+            <span class="chip critical">Administrador</span>
+          </div>
+          <form id="adminCreateUserForm" class="admin-form">
+            <label for="adminEmail">Correo</label>
+            <input id="adminEmail" name="email" type="email" required placeholder="usuario@fundacionluker.org.co" />
+
+            <label for="adminDisplayName">Nombre completo</label>
+            <input id="adminDisplayName" name="displayName" type="text" required placeholder="Nombre del usuario" />
+
+            <label for="adminPassword">Contrasena inicial</label>
+            <input id="adminPassword" name="password" type="password" required minlength="8" placeholder="Minimo 8 caracteres" />
+
+            <label for="adminRole">Rol</label>
+            <select id="adminRole" name="role">
+              <option value="user" selected>Usuario</option>
+              <option value="admin">Administrador</option>
+            </select>
+
+            <button class="btn" type="submit">Crear usuario</button>
+            <p id="adminCreateMessage" class="admin-message" aria-live="polite"></p>
+          </form>
+        </article>
+
+        <article class="card searchable" data-tags="admin usuarios estado activo inactivo listado">
+          <div class="card-head">
+            <h3>Usuarios Registrados</h3>
+            <button id="adminRefreshUsers" class="btn" type="button">Actualizar</button>
+          </div>
+          <p id="adminUsersMessage" class="admin-message" aria-live="polite"></p>
+          <div id="adminUsersList" class="admin-users-list"></div>
+        </article>
+
+        <article class="card searchable" data-tags="admin modulos crear enlace descripcion uso">
+          <div class="card-head">
+            <h3>Crear Modulo Nuevo</h3>
+            <span class="chip critical">Administrador</span>
+          </div>
+          <form id="adminCreateModuleForm" class="admin-form">
+            <label for="moduleTitle">Titulo del modulo</label>
+            <input id="moduleTitle" name="title" type="text" required placeholder="Modulo Inventario, Modulo Helpdesk..." />
+
+            <label for="moduleDescription">Descripcion</label>
+            <textarea id="moduleDescription" name="description" class="notes" required placeholder="Que hace este modulo y para que sirve"></textarea>
+
+            <label for="moduleLinkUrl">Enlace</label>
+            <input id="moduleLinkUrl" name="linkUrl" type="url" required placeholder="https://..." />
+
+            <label for="moduleLinkText">Texto del enlace</label>
+            <input id="moduleLinkText" name="linkText" type="text" required placeholder="Abrir modulo" />
+
+            <label for="moduleDetailLabel">Etiqueta detalle (ej: Conexion/Cuenta)</label>
+            <input id="moduleDetailLabel" name="detailLabel" type="text" required placeholder="Conexion" />
+
+            <label for="moduleDetailValue">Valor detalle</label>
+            <input id="moduleDetailValue" name="detailValue" type="text" required placeholder="sgifunluker" />
+
+            <label for="moduleUsage">Uso</label>
+            <textarea id="moduleUsage" name="usage" class="notes" required placeholder="Como se usa y recomendaciones"></textarea>
+
+            <label for="moduleStatus">Estado visual</label>
+            <select id="moduleStatus" name="status">
+              <option value="ok" selected>Activo</option>
+              <option value="warn">Flujo</option>
+              <option value="critical">Critico</option>
+            </select>
+
+            <label for="moduleTags">Etiquetas de busqueda (separadas por coma)</label>
+            <input id="moduleTags" name="tags" type="text" placeholder="inventario, soporte, tickets" />
+
+            <button class="btn" type="submit">Crear modulo</button>
+            <p id="adminModuleMessage" class="admin-message" aria-live="polite"></p>
+          </form>
+        </article>
       </div>
 
       <div id="incidentes" class="tab-panel">
+        <article class="card searchable runbook-card" data-tags="runbook clickup api guia soporte">
+          <div class="card-head">
+            <h3>Runbook de Resolucion API ClickUp</h3>
+            <span class="chip critical">SRE Soporte</span>
+          </div>
+          <div class="runbook-grid">
+            <div class="runbook-item">
+              <strong>1. Detectar</strong>
+              <p>Identifica codigo HTTP, endpoint y hora exacta del fallo.</p>
+            </div>
+            <div class="runbook-item">
+              <strong>2. Aislar</strong>
+              <p>Valida token, IDs y payload antes de tocar produccion.</p>
+            </div>
+            <div class="runbook-item">
+              <strong>3. Corregir</strong>
+              <p>Aplica el flujo del error especifico y vuelve a probar.</p>
+            </div>
+            <div class="runbook-item">
+              <strong>4. Escalar</strong>
+              <p>Si no resuelve en 20 min, escalar con evidencia y logs.</p>
+            </div>
+          </div>
+        </article>
+
         <article class="accordion searchable" data-tags="almera no ingresa login soporte">
           <button class="accordion-trigger" aria-expanded="false">
             <span>No puedo entrar a Almera</span>
@@ -240,18 +385,122 @@
           </div>
         </article>
 
-        <article class="accordion searchable" data-tags="forms script error clickup no llegan solicitudes">
+        <article class="accordion searchable" data-tags="clickup api 401 unauthorized token invalido">
           <button class="accordion-trigger" aria-expanded="false">
-            <span>El formulario envia pero no llega nada a ClickUp</span>
+            <span>Error 401 Unauthorized (token invalido o vencido)</span>
             <span>+</span>
           </button>
           <div class="accordion-content">
-            <ol>
-              <li>Entrar a Apps Script desde Extensiones en Google Form.</li>
-              <li>Ejecutar prueba manual y revisar registros de ejecucion.</li>
-              <li>Verificar token o webhook configurado para ClickUp.</li>
-              <li>Probar nuevamente con un envio de formulario controlado.</li>
+            <ol class="step-flow">
+              <li>Verifica que el backend lea <strong>CLICKUP_API_TOKEN</strong> desde Vercel y no desde frontend.</li>
+              <li>Prueba token con endpoint de usuario de ClickUp para validar autenticacion.</li>
+              <li>Si falla, genera token nuevo en ClickUp (Settings > Apps/Integrations).</li>
+              <li>Actualiza variable en Vercel para Production, Preview y Development.</li>
+              <li>Haz redeploy y reintenta envio desde formulario controlado.</li>
             </ol>
+            <p><strong>Escalar:</strong> Si persiste tras regenerar token, abrir ticket con ClickUp Support con request id y timestamp.</p>
+          </div>
+        </article>
+
+        <article class="accordion searchable" data-tags="clickup api 403 forbidden permisos rol">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span>Error 403 Forbidden (sin permisos sobre Space/List)</span>
+            <span>+</span>
+          </button>
+          <div class="accordion-content">
+            <ol class="step-flow">
+              <li>Confirma que la cuenta dueña del token pertenece al Workspace correcto.</li>
+              <li>Verifica rol sobre el Space y List objetivo (Editor/Admin recomendado).</li>
+              <li>Confirma que no exista restriccion por equipo o carpeta privada.</li>
+              <li>Prueba crear tarea manual con esa cuenta dentro de la lista.</li>
+              <li>Actualiza permisos y reintenta integracion desde Apps Script/backend.</li>
+            </ol>
+            <p><strong>Escalar:</strong> Si la cuenta ve la lista pero API sigue bloqueando, escalar a administrador de Workspace.</p>
+          </div>
+        </article>
+
+        <article class="accordion searchable" data-tags="clickup api 404 list id endpoint incorrecto">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span>Error 404 Not Found (endpoint o IDs incorrectos)</span>
+            <span>+</span>
+          </button>
+          <div class="accordion-content">
+            <ol class="step-flow">
+              <li>Revisa si se usa el endpoint correcto segun version API de ClickUp.</li>
+              <li>Valida <strong>CLICKUP_LIST_ID</strong> y <strong>CLICKUP_TEAM_ID</strong> en Vercel.</li>
+              <li>Confirma que los IDs no tengan espacios ni caracteres ocultos.</li>
+              <li>Haz consulta GET al recurso antes de crear o actualizar tareas.</li>
+              <li>Corrige ruta y vuelve a ejecutar prueba de punta a punta.</li>
+            </ol>
+            <p><strong>Tip:</strong> Mantener un archivo interno con IDs oficiales y fecha de ultima validacion.</p>
+          </div>
+        </article>
+
+        <article class="accordion searchable" data-tags="clickup api 429 rate limit demasiadas peticiones">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span>Error 429 Too Many Requests (rate limit)</span>
+            <span>+</span>
+          </button>
+          <div class="accordion-content">
+            <ol class="step-flow">
+              <li>Confirma en logs cuantas peticiones por minuto se estan enviando.</li>
+              <li>Implementa reintentos con backoff exponencial: 2s, 4s, 8s, 16s.</li>
+              <li>Evita enviar eventos duplicados desde Forms/App Script.</li>
+              <li>Agrupa operaciones por lote cuando aplique.</li>
+              <li>Monitorea 24h para confirmar estabilidad sin nuevos 429.</li>
+            </ol>
+            <p><strong>Escalar:</strong> Si el volumen es legitimo de negocio, evaluar upgrade o arquitectura con cola.</p>
+          </div>
+        </article>
+
+        <article class="accordion searchable" data-tags="clickup api 500 502 503 servidor caido">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span>Error 500/502/503 (fallo temporal de servicio)</span>
+            <span>+</span>
+          </button>
+          <div class="accordion-content">
+            <ol class="step-flow">
+              <li>Repite request de prueba para descartar glitch puntual.</li>
+              <li>Verifica estado de servicios de ClickUp y latencia de red.</li>
+              <li>Activa circuito de reintento con maximo 3 intentos controlados.</li>
+              <li>Si hay datos criticos, usa cola temporal y reprocesa luego.</li>
+              <li>Documenta incidente con hora inicio/fin e impacto.</li>
+            </ol>
+            <p><strong>Escalar:</strong> Si dura mas de 15 min, escalar a lider y soporte de proveedor.</p>
+          </div>
+        </article>
+
+        <article class="accordion searchable" data-tags="clickup webhook no dispara secret firma url publica">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span>Webhook no dispara o llega invalido</span>
+            <span>+</span>
+          </button>
+          <div class="accordion-content">
+            <ol class="step-flow">
+              <li>Verifica URL publica activa y accesible desde internet (sin bloqueo IP).</li>
+              <li>Confirma metodo HTTP esperado y ruta correcta en backend.</li>
+              <li>Valida firma/secret usando <strong>CLICKUP_WEBHOOK_SECRET</strong>.</li>
+              <li>Revisa logs del receptor: status, body y headers recibidos.</li>
+              <li>Regenera webhook en ClickUp si detectas configuracion corrupta.</li>
+            </ol>
+            <p><strong>Escalar:</strong> Si ClickUp marca entregado pero backend no recibe, revisar firewall y CDN.</p>
+          </div>
+        </article>
+
+        <article class="accordion searchable" data-tags="forms apps script payload campos vacios clickup">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span>Formulario envia, pero tarea llega vacia o incompleta</span>
+            <span>+</span>
+          </button>
+          <div class="accordion-content">
+            <ol class="step-flow">
+              <li>Captura payload completo saliendo de Apps Script antes del POST.</li>
+              <li>Valida mapeo de campos: titulo, descripcion, prioridad, responsable.</li>
+              <li>Aplica valores por defecto para campos obligatorios faltantes.</li>
+              <li>Registra validacion previa y rechaza envio incompleto con mensaje claro.</li>
+              <li>Prueba con 3 casos: completo, parcial y datos invalidos.</li>
+            </ol>
+            <p><strong>Escalar:</strong> Si el mapeo falla intermitente, versionar script y comparar ejecuciones.</p>
           </div>
         </article>
 

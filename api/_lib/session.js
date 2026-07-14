@@ -60,10 +60,10 @@ async function getSessionUserFromRequest(req) {
   }
 
   const result = await query(
-    `SELECT u.id, u.email, u.display_name
+    `SELECT u.id, u.email, u.display_name, u.role, u.is_active
      FROM sessions s
      INNER JOIN users u ON u.id = s.user_id
-     WHERE s.token = $1 AND s.expires_at > NOW()`,
+     WHERE s.token = $1 AND s.expires_at > NOW() AND u.is_active = TRUE`,
     [token]
   );
 
@@ -72,6 +72,19 @@ async function getSessionUserFromRequest(req) {
   }
 
   return result.rows[0];
+}
+
+async function requireAdminUser(req) {
+  const user = await getSessionUserFromRequest(req);
+  if (!user) {
+    return null;
+  }
+
+  if (user.role !== "admin") {
+    return null;
+  }
+
+  return user;
 }
 
 async function deleteSessionFromRequest(req) {
@@ -92,4 +105,5 @@ module.exports = {
   getClearCookieHeader,
   getCookieHeader,
   getSessionUserFromRequest,
+  requireAdminUser,
 };

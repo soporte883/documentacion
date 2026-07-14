@@ -6,6 +6,8 @@ Portal interno de documentacion operativa por modulos:
 - ClickUp
 - Login autenticado
 - Base de datos PostgreSQL
+- Panel de administracion de usuarios (crear, activar, inactivar)
+- Panel de administracion de modulos (crear y publicar en la vista principal)
 
 ## Estructura
 
@@ -40,6 +42,9 @@ npm run hash -- "TuClaveReal"
 ```
 
 5. Reemplaza `REEMPLAZAR_HASH_BCRYPT` en `db/schema.sql` por el hash generado y vuelve a ejecutar el `INSERT` (o inserta manualmente).
+
+Nota: el esquema actual incluye columnas `role` e `is_active` en la tabla `users`. Si ya tenias una base creada, vuelve a correr `db/schema.sql` para aplicar estos cambios.
+Nota: el esquema tambien incluye la tabla `modules` para guardar modulos creados por administrador.
 
 ## Variables En Vercel
 
@@ -78,3 +83,17 @@ npm run dev
 ```
 
 3. Abre `http://localhost:3000/login.html`.
+
+## Gestion De Usuarios (Admin)
+
+- Solo usuarios con rol `admin` pueden ver la pestaña `Admin Usuarios`.
+- Desde esa pestaña se puede:
+	- Crear usuarios nuevos (correo, nombre, clave inicial y rol).
+	- Activar/Inactivar usuarios existentes.
+- Los usuarios inactivos no pueden iniciar sesion.
+
+## Gestion De Modulos (Admin)
+
+- Solo usuarios `admin` pueden crear modulos nuevos.
+- Los modulos se guardan en base de datos y se muestran en la pestana `Modulos` para todos los usuarios autenticados.
+- Campos incluidos: titulo, descripcion, enlace, etiqueta/valor de detalle, uso, estado visual y tags de busqueda.

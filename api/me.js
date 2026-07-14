@@ -19,6 +19,8 @@ module.exports = async function handler(req, res) {
         id: user.id,
         email: user.email,
         displayName: user.display_name,
+        role: user.role,
+        isActive: user.is_active,
       },
     });
   } catch (error) {
