@@ -71,6 +71,18 @@ const DEFAULT_MODULES = [
     status: "warn",
     tags: "clickup tickets solicitudes soporte",
   },
+  {
+    title: "Sistema Precargas Almera",
+    description:
+      "Plataforma para operar precargas de estudiantes en Almera de forma segura: gestion de usuarios y permisos, conexiones cifradas, encuestas, procesos de precarga (descarga, combinar y subir) y monitoreo del worker.",
+    link_url: "https://web-kohl-seven-5pnmatyjgk.vercel.app",
+    link_text: "Abrir plataforma",
+    detail_label: "Ingreso",
+    detail_value: "Pantalla /login. Ver manual en la pestana Precargas Almera.",
+    usage: "Registrar encuestas, crear procesos de precarga y descargar archivos combinados.",
+    status: "ok",
+    tags: "precargas almera worker vercel estudiantes encuestas procesos combinar subir proyecto",
+  },
 ];
 
 async function main() {
