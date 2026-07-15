@@ -945,6 +945,37 @@ function updateStats() {
   document.getElementById("countPending").textContent = String(pending);
 }
 
+function setupQuickNoteButtons() {
+  const processCards = [...document.querySelectorAll("#procesos .user-notes-card")];
+
+  processCards.forEach((card) => {
+    const head = card.querySelector(".card-head");
+    const textarea = card.querySelector("textarea.notes");
+    if (!head || !textarea) {
+      return;
+    }
+
+    if (head.querySelector(".go-notes-btn")) {
+      return;
+    }
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "btn ghost go-notes-btn";
+    button.textContent = "Ir a notas";
+    button.setAttribute("aria-label", "Ir al campo de notas de esta tarjeta");
+
+    button.addEventListener("click", () => {
+      textarea.scrollIntoView({ behavior: "smooth", block: "center" });
+      textarea.focus({ preventScroll: true });
+      const endPos = textarea.value.length;
+      textarea.setSelectionRange(endPos, endPos);
+    });
+
+    head.appendChild(button);
+  });
+}
+
 function setMessage(element, text, isError = false) {
   if (!element) {
     return;
@@ -1326,6 +1357,7 @@ async function init() {
 
   loadChecklistState();
   loadNotesState();
+  setupQuickNoteButtons();
   renderSecrets();
   updateStats();
   await loadModules();

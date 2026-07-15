@@ -357,6 +357,12 @@ body {
   overflow-y: auto;
 }
 
+/* Las tarjetas con notas de usuario deben quedar completas (sin recorte). */
+#procesos .card.user-notes-card {
+  max-height: none;
+  overflow-y: visible;
+}
+
 #incidentes .runbook-card {
   grid-column: 1 / -1;
 }
@@ -546,6 +552,12 @@ body {
 
 .btn.danger:hover {
   background: rgba(190, 45, 45, 0.1);
+}
+
+.go-notes-btn {
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  border-radius: 999px;
 }
 
 .dynamic-modules-wrap {
