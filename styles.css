@@ -364,6 +364,29 @@ body {
   font-size: 0.98rem;
   letter-spacing: -0.015em;
   line-height: 1.32;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Evita que textos largos (correos, URLs, valores) se salgan de las tarjetas */
+.card p,
+.card li,
+.card a,
+.card strong,
+.card span,
+.kv-list li,
+.accordion-content p,
+.accordion-content li,
+.accordion-content a,
+.module-card p {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  min-width: 0;
+}
+
+.card a,
+.accordion-content a {
+  word-break: break-all;
 }
 
 .title-wrap {
@@ -474,6 +497,13 @@ body {
 .kv-list li {
   margin-bottom: 7px;
   font-size: 0.92rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.secret {
+  overflow-wrap: anywhere;
+  word-break: break-all;
 }
 
 .mini {
@@ -700,6 +730,13 @@ body {
   gap: 8px;
 }
 
+/* Limita la altura de los formularios del panel admin para emparejar tarjetas */
+#admin .admin-form {
+  max-height: 48vh;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
 .admin-form label {
   color: var(--muted);
   font-size: 0.86rem;
@@ -760,12 +797,14 @@ body {
 
 .dynamic-modules-list::-webkit-scrollbar,
 .accordion-content::-webkit-scrollbar,
+#admin .admin-form::-webkit-scrollbar,
 .admin-users-list::-webkit-scrollbar {
   width: 8px;
 }
 
 .dynamic-modules-list::-webkit-scrollbar-thumb,
 .accordion-content::-webkit-scrollbar-thumb,
+#admin .admin-form::-webkit-scrollbar-thumb,
 .admin-users-list::-webkit-scrollbar-thumb {
   background: color-mix(in srgb, var(--accent) 45%, transparent);
   border-radius: 999px;
@@ -773,6 +812,7 @@ body {
 
 .dynamic-modules-list,
 .accordion-content,
+#admin .admin-form,
 .admin-users-list {
   scrollbar-color: color-mix(in srgb, var(--accent) 45%, transparent) transparent;
   scrollbar-width: thin;
