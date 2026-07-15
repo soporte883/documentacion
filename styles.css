@@ -175,6 +175,14 @@ body {
   margin: 0 auto;
 }
 
+.layout.stats-collapsed {
+  grid-template-columns: 1fr;
+}
+
+.layout.stats-collapsed .stats {
+  display: none;
+}
+
 .panel {
   border: 1px solid var(--line);
   border-radius: 20px;

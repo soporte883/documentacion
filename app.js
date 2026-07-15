@@ -3,10 +3,12 @@ const panels = [...document.querySelectorAll(".tab-panel")];
 const adminOnlyNodes = [...document.querySelectorAll(".admin-only")];
 const searchInput = document.getElementById("globalSearch");
 const themeToggleBtn = document.getElementById("themeToggle");
+const toggleStatsBtn = document.getElementById("toggleStatsBtn");
 const toggleSecretsBtn = document.getElementById("toggleSecrets");
 const logoutBtn = document.getElementById("logoutBtn");
 const changePasswordBtn = document.getElementById("changePasswordBtn");
 const activeUserLabel = document.getElementById("activeUser");
+const layoutRoot = document.querySelector(".layout");
 const copyButtons = [...document.querySelectorAll(".copy-secret")];
 const checkboxes = [...document.querySelectorAll(".checklist input[type='checkbox']")];
 const notes = [...document.querySelectorAll(".notes")];
@@ -33,6 +35,7 @@ const STORAGE_KEYS = {
   checklist: "doc_checklist_state",
   notes: "doc_notes_state",
   theme: "doc_theme_mode",
+  statsCollapsed: "doc_stats_collapsed",
 };
 
 let secretsVisible = true;
@@ -66,6 +69,31 @@ function toggleTheme() {
   const next = isDark ? "light" : "dark";
   localStorage.setItem(STORAGE_KEYS.theme, next);
   applyTheme(next);
+}
+
+function applyStatsVisibility(collapsed) {
+  if (!layoutRoot || !toggleStatsBtn) {
+    return;
+  }
+
+  layoutRoot.classList.toggle("stats-collapsed", collapsed);
+  toggleStatsBtn.textContent = collapsed ? "Mostrar estado" : "Ocultar estado";
+  toggleStatsBtn.setAttribute("aria-expanded", String(!collapsed));
+}
+
+function loadStatsVisibility() {
+  const collapsed = localStorage.getItem(STORAGE_KEYS.statsCollapsed) === "1";
+  applyStatsVisibility(collapsed);
+}
+
+function toggleStatsVisibility() {
+  if (!layoutRoot) {
+    return;
+  }
+
+  const collapsed = !layoutRoot.classList.contains("stats-collapsed");
+  localStorage.setItem(STORAGE_KEYS.statsCollapsed, collapsed ? "1" : "0");
+  applyStatsVisibility(collapsed);
 }
 
 async function ensureAuthenticated() {
@@ -1263,6 +1291,10 @@ if (themeToggleBtn) {
   themeToggleBtn.addEventListener("click", toggleTheme);
 }
 
+if (toggleStatsBtn) {
+  toggleStatsBtn.addEventListener("click", toggleStatsVisibility);
+}
+
 searchInput.addEventListener("input", (event) => {
   applySearch(event.target.value);
 });
@@ -1346,6 +1378,7 @@ document.querySelectorAll(".accordion-trigger").forEach((trigger) => {
 
 async function init() {
   applyTheme(getPreferredTheme());
+  loadStatsVisibility();
 
   const ok = await ensureAuthenticated();
   if (!ok) {
