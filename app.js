@@ -24,6 +24,10 @@ const dynamicCredsList = document.getElementById("dynamicCredsList");
 const dynamicCredsMessage = document.getElementById("dynamicCredsMessage");
 const adminCreateCredentialForm = document.getElementById("adminCreateCredentialForm");
 const adminCredentialMessage = document.getElementById("adminCredentialMessage");
+const adminAuditList = document.getElementById("adminAuditList");
+const adminAuditMessage = document.getElementById("adminAuditMessage");
+const adminRefreshAuditBtn = document.getElementById("adminRefreshAudit");
+const adminAuditSearchInput = document.getElementById("adminAuditSearch");
 
 const STORAGE_KEYS = {
   checklist: "doc_checklist_state",
@@ -250,7 +254,7 @@ function renderCredentialCard(cred) {
     : "";
   const secretRow = cred.secret
     ? `<li><strong>Clave:</strong> <span class="secret" data-secret="${escapeHtml(cred.secret)}">••••••••••••</span>
-        <button class="mini copy-secret" data-copy="${escapeHtml(cred.secret)}">Copiar</button></li>`
+        <button class="mini copy-secret" data-copy="${escapeHtml(cred.secret)}" aria-label="Copiar clave de ${escapeHtml(cred.title)}">Copiar</button></li>`
     : "";
   const usageRow = cred.usage ? `<li><strong>Uso:</strong> ${escapeHtml(cred.usage)}</li>` : "";
 
@@ -267,6 +271,7 @@ function renderCredentialCard(cred) {
       ${secretRow}
       ${usageRow}
     </ul>
+    ${metaLine(cred)}
   `;
 
   const copyButton = card.querySelector(".copy-secret");
@@ -278,8 +283,8 @@ function renderCredentialCard(cred) {
     const actions = document.createElement("div");
     actions.className = "admin-user-actions";
     actions.innerHTML = `
-      <button class="btn" type="button" data-action="edit-cred">Editar</button>
-      <button class="btn ghost danger" type="button" data-action="delete-cred">Eliminar</button>
+      <button class="btn" type="button" data-action="edit-cred" aria-label="Editar credencial ${escapeHtml(cred.title)}">Editar</button>
+      <button class="btn ghost danger" type="button" data-action="delete-cred" aria-label="Eliminar credencial ${escapeHtml(cred.title)}">Eliminar</button>
     `;
     actions
       .querySelector("[data-action='edit-cred']")
@@ -436,6 +441,57 @@ async function handleDeleteCredential(cred) {
   }
 }
 
+function renderAuditRow(log) {
+  const item = document.createElement("article");
+  item.className = "admin-user-item";
+  const date = log.createdAt ? new Date(log.createdAt).toLocaleString() : "";
+  item.innerHTML = `
+    <div>
+      <strong>${escapeHtml(log.action)}</strong>
+      <p>${escapeHtml(log.actorEmail || "sistema")} ${log.target ? "· " + escapeHtml(log.target) : ""}</p>
+      ${log.detail ? `<p>${escapeHtml(log.detail)}</p>` : ""}
+      <p>${escapeHtml(date)}</p>
+    </div>
+  `;
+  return item;
+}
+
+async function loadAuditLogs() {
+  if (!adminAuditList) {
+    return;
+  }
+
+  adminAuditList.innerHTML = "";
+  setMessage(adminAuditMessage, "Cargando actividad...");
+
+  const search = adminAuditSearchInput ? adminAuditSearchInput.value.trim() : "";
+  const queryString = search ? `?search=${encodeURIComponent(search)}` : "";
+
+  try {
+    const response = await fetch(`/api/audit${queryString}`, {
+      method: "GET",
+      credentials: "include",
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      setMessage(adminAuditMessage, data.error || "No fue posible cargar la actividad", true);
+      return;
+    }
+
+    if (!data.logs.length) {
+      setMessage(adminAuditMessage, "Sin actividad registrada");
+      return;
+    }
+
+    data.logs.forEach((log) => {
+      adminAuditList.appendChild(renderAuditRow(log));
+    });
+    setMessage(adminAuditMessage, `Registros: ${data.logs.length}`);
+  } catch {
+    setMessage(adminAuditMessage, "Error de conexion al cargar la actividad", true);
+  }
+}
+
 function statusTextFromCode(status) {
   if (status === "critical") {
     return "Critico";
@@ -446,6 +502,18 @@ function statusTextFromCode(status) {
   }
 
   return "Activo";
+}
+
+// Linea de metadatos (autor / ultima actualizacion) para tarjetas dinamicas.
+function metaLine(item) {
+  const parts = [];
+  if (item.creatorName) {
+    parts.push(`Por ${escapeHtml(item.creatorName)}`);
+  }
+  if (item.updatedAt) {
+    parts.push(`Actualizado ${new Date(item.updatedAt).toLocaleDateString()}`);
+  }
+  return parts.length ? `<p class="card-meta">${parts.join(" · ")}</p>` : "";
 }
 
 function renderDynamicModuleCard(moduleItem) {
@@ -476,6 +544,7 @@ function renderDynamicModuleCard(moduleItem) {
       <li><strong>${safeDetailLabel}:</strong> ${safeDetailValue}</li>
       <li><strong>Uso:</strong> ${safeUsage}</li>
     </ul>
+    ${metaLine(moduleItem)}
   `;
 
   // Modulo de precargas: boton de acceso rapido a la documentacion (manual).
@@ -1219,6 +1288,18 @@ if (adminCreateCredentialForm) {
   adminCreateCredentialForm.addEventListener("submit", handleCreateCredential);
 }
 
+if (adminRefreshAuditBtn) {
+  adminRefreshAuditBtn.addEventListener("click", loadAuditLogs);
+}
+
+if (adminAuditSearchInput) {
+  let auditSearchTimer;
+  adminAuditSearchInput.addEventListener("input", () => {
+    clearTimeout(auditSearchTimer);
+    auditSearchTimer = setTimeout(loadAuditLogs, 300);
+  });
+}
+
 if (changePasswordBtn) {
   changePasswordBtn.addEventListener("click", () => openChangePasswordModal(false));
 }
@@ -1253,6 +1334,7 @@ async function init() {
 
   if (isAdmin) {
     await loadUsers();
+    await loadAuditLogs();
   }
 
   if (currentUser?.mustChangePassword) {

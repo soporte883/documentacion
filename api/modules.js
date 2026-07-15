@@ -17,7 +17,9 @@ function mapModule(row) {
     usage: row.usage,
     status: row.status,
     tags: row.tags,
+    creatorName: row.creator_name || null,
     createdAt: row.created_at,
+    updatedAt: row.updated_at,
   };
 }
 
@@ -72,21 +74,24 @@ module.exports = async function handler(req, res) {
       const offset = (page - 1) * pageSize;
 
       const where = search
-        ? "WHERE LOWER(title) LIKE $1 OR LOWER(description) LIKE $1 OR LOWER(tags) LIKE $1"
+        ? "WHERE LOWER(m.title) LIKE $1 OR LOWER(m.description) LIKE $1 OR LOWER(m.tags) LIKE $1"
         : "";
       const params = search ? [`%${search}%`] : [];
 
       const totalResult = await query(
-        `SELECT COUNT(*)::int AS total FROM modules ${where}`,
+        `SELECT COUNT(*)::int AS total FROM modules m ${where}`,
         params
       );
       const total = totalResult.rows[0]?.total ?? 0;
 
       const result = await query(
-        `SELECT id, title, description, link_url, link_text, detail_label, detail_value, usage, status, tags, created_at
-         FROM modules
+        `SELECT m.id, m.title, m.description, m.link_url, m.link_text, m.detail_label,
+                m.detail_value, m.usage, m.status, m.tags, m.created_at, m.updated_at,
+                u.display_name AS creator_name
+         FROM modules m
+         LEFT JOIN users u ON u.id = m.created_by
          ${where}
-         ORDER BY created_at DESC
+         ORDER BY m.created_at DESC
          LIMIT ${pageSize} OFFSET ${offset}`,
         params
       );

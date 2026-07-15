@@ -434,6 +434,13 @@ body {
   margin-top: 10px;
 }
 
+.card-meta {
+  margin: 8px 0 0;
+  font-size: 0.74rem;
+  color: var(--muted);
+  opacity: 0.85;
+}
+
 .module-notes {
   margin-top: 12px;
   border-top: 1px dashed var(--line);

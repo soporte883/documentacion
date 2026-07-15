@@ -438,6 +438,19 @@
             <p id="adminCredentialMessage" class="admin-message" aria-live="polite"></p>
           </form>
         </article>
+
+        <article class="card searchable" data-tags="admin auditoria actividad logs registro seguridad">
+          <div class="card-head">
+            <h3>Actividad Reciente (Auditoria)</h3>
+            <button id="adminRefreshAudit" class="btn" type="button">Actualizar</button>
+          </div>
+          <label class="search-wrap" for="adminAuditSearch">
+            <span>Buscar actividad</span>
+            <input id="adminAuditSearch" type="search" placeholder="Correo, accion, objetivo..." />
+          </label>
+          <p id="adminAuditMessage" class="admin-message" aria-live="polite"></p>
+          <div id="adminAuditList" class="admin-users-list"></div>
+        </article>
       </div>
 
       <div id="incidentes" class="tab-panel">

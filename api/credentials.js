@@ -4,18 +4,21 @@ const { getSessionUserFromRequest, requireAdminUser } = require("./_lib/session"
 const { isValidCsrf } = require("./_lib/csrf");
 const { writeAudit } = require("./_lib/audit");
 const { normalizeText } = require("./_lib/validation");
+const { encryptSecret, decryptSecret } = require("./_lib/crypto");
 
 function mapCredential(row) {
   return {
     id: row.id,
     title: row.title,
     account: row.account,
-    secret: row.secret,
+    secret: decryptSecret(row.secret),
     usage: row.usage,
     status: row.status,
     chipLabel: row.chip_label,
     tags: row.tags,
+    creatorName: row.creator_name || null,
     createdAt: row.created_at,
+    updatedAt: row.updated_at,
   };
 }
 
@@ -63,15 +66,17 @@ module.exports = async function handler(req, res) {
       const search = normalizeText(url.searchParams.get("search")).toLowerCase();
 
       const where = search
-        ? "WHERE LOWER(title) LIKE $1 OR LOWER(account) LIKE $1 OR LOWER(tags) LIKE $1"
+        ? "WHERE LOWER(c.title) LIKE $1 OR LOWER(c.account) LIKE $1 OR LOWER(c.tags) LIKE $1"
         : "";
       const params = search ? [`%${search}%`] : [];
 
       const result = await query(
-        `SELECT id, title, account, secret, usage, status, chip_label, tags, created_at
-         FROM credentials
+        `SELECT c.id, c.title, c.account, c.secret, c.usage, c.status, c.chip_label, c.tags,
+                c.created_at, c.updated_at, u.display_name AS creator_name
+         FROM credentials c
+         LEFT JOIN users u ON u.id = c.created_by
          ${where}
-         ORDER BY created_at ASC
+         ORDER BY c.created_at ASC
          LIMIT 200`,
         params
       );
@@ -104,11 +109,11 @@ module.exports = async function handler(req, res) {
       const result = await query(
         `INSERT INTO credentials (title, account, secret, usage, status, chip_label, tags, created_by)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-         RETURNING id, title, account, secret, usage, status, chip_label, tags, created_at`,
+         RETURNING id, title, account, secret, usage, status, chip_label, tags, created_at, updated_at`,
         [
           fields.title,
           fields.account,
-          fields.secret,
+          encryptSecret(fields.secret),
           fields.usage,
           fields.status,
           fields.chipLabel,
@@ -139,11 +144,11 @@ module.exports = async function handler(req, res) {
            title = $1, account = $2, secret = $3, usage = $4,
            status = $5, chip_label = $6, tags = $7, updated_at = NOW()
          WHERE id = $8
-         RETURNING id, title, account, secret, usage, status, chip_label, tags, created_at`,
+         RETURNING id, title, account, secret, usage, status, chip_label, tags, created_at, updated_at`,
         [
           fields.title,
           fields.account,
-          fields.secret,
+          encryptSecret(fields.secret),
           fields.usage,
           fields.status,
           fields.chipLabel,

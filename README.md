@@ -70,6 +70,17 @@ Configura en Project Settings -> Environment Variables:
 
 - `DATABASE_URL` = cadena de conexion PostgreSQL
 - `PGSSLMODE` = `disable` (solo si tu BD local no usa SSL)
+- `CREDENTIALS_ENC_KEY` = clave para cifrar los secretos de las credenciales (AES-256-GCM). Usa el mismo valor que en `.env.local` (Production, Preview y Development).
+
+### Cifrado de credenciales
+
+Los secretos de la pestana Accesos (tabla `credentials`) se cifran con `CREDENTIALS_ENC_KEY`.
+Si la variable no esta configurada, el sistema sigue funcionando pero guarda los secretos en
+texto plano (compatibilidad). Para activar el cifrado en registros existentes:
+
+1. Define `CREDENTIALS_ENC_KEY` en `.env.local` y en Vercel (mismo valor).
+2. Vuelve a desplegar en Vercel.
+3. Ejecuta `npm run encrypt:credentials` para cifrar los secretos ya guardados.
 
 ## Publicacion en Vercel
 
