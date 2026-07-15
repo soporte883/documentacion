@@ -73,11 +73,29 @@
         <button class="tab active" data-tab="modulos">Modulos</button>
         <button class="tab" data-tab="procesos">Paso a Paso</button>
         <button class="tab" data-tab="accesos">Accesos</button>
+        <button class="tab" data-tab="precargas">Precargas Almera</button>
         <button class="tab admin-only" data-tab="admin" hidden>Admin Usuarios</button>
         <button class="tab" data-tab="incidentes">Incidentes Frecuentes</button>
       </nav>
 
       <div id="modulos" class="tab-panel active">
+        <article class="card searchable" data-tags="precargas almera worker vercel estudiantes encuestas procesos combinar subir proyecto nuevo">
+          <div class="card-head">
+            <div class="title-wrap">
+              <span class="logo-badge dynamic">P</span>
+              <h3>Sistema Precargas Almera</h3>
+            </div>
+            <span class="chip ok">Nuevo</span>
+          </div>
+          <p>Plataforma para operar precargas de estudiantes en Almera de forma segura: gestion de usuarios y permisos, conexiones cifradas, encuestas, procesos de precarga (descarga, combinar y subir) y monitoreo del worker.</p>
+          <ul class="kv-list">
+            <li><strong>Enlace:</strong> <a href="https://web-kohl-seven-5pnmatyjgk.vercel.app" target="_blank" rel="noreferrer">Abrir plataforma</a></li>
+            <li><strong>Ingreso:</strong> Pantalla /login</li>
+            <li><strong>Manual:</strong> Ver pestana <strong>Precargas Almera</strong></li>
+            <li><strong>Uso:</strong> Registrar encuestas, crear procesos de precarga y descargar archivos combinados.</li>
+          </ul>
+        </article>
+
         <section class="dynamic-modules-wrap" aria-label="Modulos operativos">
           <div class="card-head">
             <h3>Modulos Operativos</h3>
@@ -220,6 +238,168 @@
             <li><strong>Webhook Secret:</strong> Guardar en <strong>CLICKUP_WEBHOOK_SECRET</strong> si aplica.</li>
             <li><strong>Regla:</strong> Nunca exponer token en frontend ni repositorio.</li>
           </ul>
+        </article>
+      </div>
+
+      <div id="precargas" class="tab-panel">
+        <article class="card searchable" data-tags="precargas almera manual objetivo acceso login credenciales">
+          <div class="card-head">
+            <h3>Manual de Usuario - Sistema Precargas Almera</h3>
+            <span class="chip ok">Manual</span>
+          </div>
+          <p>Guia paso a paso para operar precargas de estudiantes en Almera de forma segura y sin errores. El sistema permite gestionar usuarios y permisos, guardar conexiones seguras, registrar encuestas, crear y ejecutar procesos de precarga, revisar logs y resultados, y monitorear el estado del worker.</p>
+          <ul class="kv-list">
+            <li><strong>URL produccion:</strong> <a href="https://web-kohl-seven-5pnmatyjgk.vercel.app" target="_blank" rel="noreferrer">web-kohl-seven-5pnmatyjgk.vercel.app</a></li>
+            <li><strong>Pantalla de ingreso:</strong> /login</li>
+            <li><strong>Usuario inicial:</strong> admin@local.dev</li>
+            <li><strong>Clave inicial:</strong> <span class="secret" data-secret="Admin123456!">••••••••••••</span>
+              <button class="mini copy-secret" data-copy="Admin123456!">Copiar</button>
+            </li>
+            <li><strong>Recomendacion:</strong> Cambiar la clave al primer ingreso y crear un admin propio.</li>
+          </ul>
+        </article>
+
+        <article class="card searchable" data-tags="precargas roles permisos admin operador lector">
+          <div class="card-head">
+            <h3>Roles y permisos</h3>
+            <span class="chip warn">Accesos</span>
+          </div>
+          <ul class="kv-list">
+            <li><strong>ADMIN:</strong> Gestiona usuarios, conexiones y encuestas; crea y reintenta procesos; configura notificaciones.</li>
+            <li><strong>OPERADOR:</strong> Gestiona encuestas; crea y opera procesos.</li>
+            <li><strong>LECTOR:</strong> Solo consulta informacion.</li>
+          </ul>
+        </article>
+
+        <article class="card searchable" data-tags="precargas primer uso checklist inicio rapido onboarding">
+          <div class="card-head">
+            <h3>Primer uso (checklist rapido)</h3>
+            <span class="chip ok">Inicio</span>
+          </div>
+          <ol class="step-flow">
+            <li>Iniciar sesion.</li>
+            <li>Ir a <strong>Conexiones</strong> y crear una conexion Almera.</li>
+            <li>Ir a <strong>Encuestas</strong> y registrar las encuestas (con encuestaId).</li>
+            <li>Ir a <strong>Procesos &gt; Nuevo</strong> y crear un proceso de prueba.</li>
+            <li>Verificar en el dashboard que el worker aparezca <strong>ACTIVO</strong>.</li>
+          </ol>
+        </article>
+
+        <article class="accordion searchable" data-tags="precargas conexiones conid url usuario contrasena almera cifrada">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span>Modulo Conexiones</span>
+            <span>+</span>
+          </button>
+          <div class="accordion-content">
+            <p><strong>Ruta:</strong> Conexiones. <strong>Accion principal:</strong> Crear conexion.</p>
+            <p><strong>Campos:</strong></p>
+            <ol>
+              <li>Nombre de conexion</li>
+              <li>conid</li>
+              <li>URL base</li>
+              <li>Usuario Almera</li>
+              <li>Contrasena Almera</li>
+            </ol>
+            <p><strong>Importante:</strong> La contrasena se almacena cifrada. Crear una conexion no crea encuestas automaticamente.</p>
+          </div>
+        </article>
+
+        <article class="accordion searchable" data-tags="precargas encuestas encuestaid conexion hoja base items claves identificacion codigo">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span>Modulo Encuestas</span>
+            <span>+</span>
+          </button>
+          <div class="accordion-content">
+            <p><strong>Ruta:</strong> Encuestas. <strong>Accion principal:</strong> Crear encuesta.</p>
+            <p><strong>Campos:</strong></p>
+            <ol>
+              <li>Nombre</li>
+              <li>encuestaId (ID real en Almera)</li>
+              <li>Conexion asociada</li>
+              <li>Hoja base (normalmente Items)</li>
+              <li>Claves (por defecto: Numero de identificacion, Codigo)</li>
+            </ol>
+            <p><strong>Tip operativo:</strong> Valida el encuestaId desde Almera antes de guardar.</p>
+          </div>
+        </article>
+
+        <article class="accordion searchable" data-tags="precargas procesos nuevo crear tipo solo_descarga combinar subir excel gsheet filtros reintentar detalle">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span>Modulo Procesos</span>
+            <span>+</span>
+          </button>
+          <div class="accordion-content">
+            <p><strong>Ruta:</strong> Procesos.</p>
+            <p><strong>Crear proceso (Procesos &gt; Nuevo). Configura:</strong></p>
+            <ol>
+              <li>Encuesta</li>
+              <li>Tipo: SOLO_DESCARGA, COMBINAR o COMBINAR_Y_SUBIR</li>
+              <li>Fuente de nuevos: EXCEL, GSHEET o NINGUNA</li>
+              <li>Si la fuente es EXCEL: adjuntar archivo .xlsx</li>
+              <li>Si la fuente es GSHEET: completar Google Sheet ID y nombre de hoja</li>
+            </ol>
+            <p><strong>Filtros disponibles:</strong> busqueda general (encuesta / usuario), estado, encuesta y fecha desde/hasta.</p>
+            <p><strong>Reintentar:</strong> si un proceso queda en ERROR o CANCELADO, usar el boton <strong>Reintentar</strong> en el listado o el detalle.</p>
+            <p><strong>Ver detalle:</strong> muestra estado y resumen, logs cronologicos, error (si existe) y descarga del archivo combinado (si fue generado).</p>
+          </div>
+        </article>
+
+        <article class="accordion searchable" data-tags="precargas dashboard inicio kpi worker heartbeat activo sin_datos onboarding">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span>Dashboard</span>
+            <span>+</span>
+          </button>
+          <div class="accordion-content">
+            <p><strong>Ruta:</strong> Inicio. Incluye KPIs operativos, checklist de onboarding, estado del worker y ultimos procesos.</p>
+            <p><strong>Estado del worker esperado:</strong></p>
+            <ol>
+              <li>ACTIVO: reportando heartbeat.</li>
+              <li>SIN_DATOS: sin latidos recientes.</li>
+            </ol>
+            <p><strong>Si esta SIN_DATOS:</strong> revisar que el worker este ejecutandose en PC/VM y verificar WEB_API_URL y WORKER_TOKEN del worker.</p>
+          </div>
+        </article>
+
+        <article class="accordion searchable" data-tags="precargas notificaciones slack webhook email admin errores">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span>Notificaciones y gestion de usuarios</span>
+            <span>+</span>
+          </button>
+          <div class="accordion-content">
+            <p><strong>Notificaciones (ADMIN):</strong> configurar Slack webhook y Email. Recomendacion: activar avisos en ERROR para reaccion rapida.</p>
+            <p><strong>Gestion de usuarios (ADMIN):</strong> crear usuarios, asignar roles y activar / desactivar cuentas. Buena practica: minimo privilegio, dar ADMIN solo a quien lo necesite.</p>
+          </div>
+        </article>
+
+        <article class="accordion searchable" data-tags="precargas errores comunes solucion login encuestas pendiente combinar">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span>Errores comunes y solucion</span>
+            <span>+</span>
+          </button>
+          <div class="accordion-content">
+            <ol class="step-flow">
+              <li><strong>No puedo iniciar sesion:</strong> verificar usuario/clave, que el usuario este activo y la DB configurada en el entorno.</li>
+              <li><strong>No aparecen encuestas en Nuevo proceso:</strong> debes crearlas primero en el modulo Encuestas; crear conexion no agrega encuestas automaticamente.</li>
+              <li><strong>Los procesos quedan en PENDIENTE:</strong> worker apagado o sin conexion; revisar token y URL del worker.</li>
+              <li><strong>Error al combinar:</strong> verificar estructura de columnas del Excel/GSHEET y las claves (Numero de identificacion y Codigo).</li>
+            </ol>
+          </div>
+        </article>
+
+        <article class="card searchable" data-tags="precargas buenas practicas soporte interno documentacion">
+          <div class="card-head">
+            <h3>Buenas practicas y soporte</h3>
+            <span class="chip warn">Operacion</span>
+          </div>
+          <p><strong>Buenas practicas operativas:</strong></p>
+          <ul>
+            <li>Probar primero con tipo COMBINAR sin subir.</li>
+            <li>Revisar el archivo combinado antes de COMBINAR_Y_SUBIR.</li>
+            <li>Mantener el worker ejecutandose en una maquina estable.</li>
+            <li>Revisar logs diariamente.</li>
+            <li>Cambiar claves periodicamente.</li>
+          </ul>
+          <p><strong>Soporte interno (documentacion tecnica):</strong> README.md (general), web/README.md, worker/README.md y PROMPT_ACCESO_Y_OPERACION.md (prompt operativo).</p>
         </article>
       </div>
 

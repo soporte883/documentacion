@@ -320,6 +320,10 @@ body {
   grid-template-columns: 1fr;
 }
 
+#precargas.tab-panel.active {
+  grid-template-columns: 1fr;
+}
+
 .card,
 .accordion {
   border: 1px solid var(--line);
