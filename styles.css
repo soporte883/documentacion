@@ -326,11 +326,11 @@ body {
 
 #procesos.tab-panel.active,
 #incidentes.tab-panel.active {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
 #precargas.tab-panel.active {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
 .module-group-title {
@@ -341,10 +341,24 @@ body {
   color: var(--accent);
   border-bottom: 1px solid var(--line);
   padding-bottom: 6px;
+  grid-column: 1 / -1;
 }
 
 .module-group-title:first-child {
   margin-top: 0;
+}
+
+/* En secciones extensas, evita paginas demasiado largas: cada tarjeta puede
+   hacer scroll interno sin perder el formato de tarjeta. */
+#procesos .card,
+#incidentes .card,
+#precargas .card {
+  max-height: 460px;
+  overflow-y: auto;
+}
+
+#incidentes .runbook-card {
+  grid-column: 1 / -1;
 }
 
 .card,
@@ -1111,8 +1125,17 @@ body.theme-dark .admin-message.error {
 
   #modulos.tab-panel.active,
   #accesos.tab-panel.active,
-  #admin.tab-panel.active {
+  #admin.tab-panel.active,
+  #procesos.tab-panel.active,
+  #incidentes.tab-panel.active,
+  #precargas.tab-panel.active {
     grid-template-columns: 1fr;
+  }
+
+  #procesos .card,
+  #incidentes .card,
+  #precargas .card {
+    max-height: none;
   }
 }
 
