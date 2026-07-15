@@ -7,7 +7,6 @@ const toggleSecretsBtn = document.getElementById("toggleSecrets");
 const logoutBtn = document.getElementById("logoutBtn");
 const changePasswordBtn = document.getElementById("changePasswordBtn");
 const activeUserLabel = document.getElementById("activeUser");
-const secrets = [...document.querySelectorAll(".secret")];
 const copyButtons = [...document.querySelectorAll(".copy-secret")];
 const checkboxes = [...document.querySelectorAll(".checklist input[type='checkbox']")];
 const notes = [...document.querySelectorAll(".notes")];
@@ -21,6 +20,10 @@ const adminCreateModuleForm = document.getElementById("adminCreateModuleForm");
 const adminModuleMessage = document.getElementById("adminModuleMessage");
 const dynamicModulesList = document.getElementById("dynamicModulesList");
 const dynamicModulesMessage = document.getElementById("dynamicModulesMessage");
+const dynamicCredsList = document.getElementById("dynamicCredsList");
+const dynamicCredsMessage = document.getElementById("dynamicCredsMessage");
+const adminCreateCredentialForm = document.getElementById("adminCreateCredentialForm");
+const adminCredentialMessage = document.getElementById("adminCredentialMessage");
 
 const STORAGE_KEYS = {
   checklist: "doc_checklist_state",
@@ -215,13 +218,231 @@ function openModal(title, fields, onSubmit) {
   return { close, setMessage: (t, e) => setMessage(message, t, e) };
 }
 
+function attachCopyHandler(button) {
+  button.addEventListener("click", async () => {
+    const value = button.dataset.copy || "";
+    try {
+      await navigator.clipboard.writeText(value);
+      button.textContent = "Copiado";
+      setTimeout(() => {
+        button.textContent = "Copiar";
+      }, 1100);
+    } catch {
+      button.textContent = "No disponible";
+      setTimeout(() => {
+        button.textContent = "Copiar";
+      }, 1100);
+    }
+  });
+}
+
+function renderCredentialCard(cred) {
+  const card = document.createElement("article");
+  card.className = "card searchable module-card";
+  card.dataset.tags = cred.tags || "";
+
+  const status = ["ok", "warn", "critical"].includes(cred.status) ? cred.status : "ok";
+  const chipLabel = cred.chipLabel || statusTextFromCode(status);
+  const firstLetter = (cred.title || "C").trim().charAt(0).toUpperCase() || "C";
+
+  const accountRow = cred.account
+    ? `<li><strong>Cuenta:</strong> ${escapeHtml(cred.account)}</li>`
+    : "";
+  const secretRow = cred.secret
+    ? `<li><strong>Clave:</strong> <span class="secret" data-secret="${escapeHtml(cred.secret)}">••••••••••••</span>
+        <button class="mini copy-secret" data-copy="${escapeHtml(cred.secret)}">Copiar</button></li>`
+    : "";
+  const usageRow = cred.usage ? `<li><strong>Uso:</strong> ${escapeHtml(cred.usage)}</li>` : "";
+
+  card.innerHTML = `
+    <div class="card-head">
+      <div class="title-wrap">
+        <span class="logo-badge dynamic">${firstLetter}</span>
+        <h3>${escapeHtml(cred.title)}</h3>
+      </div>
+      <span class="chip ${status}">${escapeHtml(chipLabel)}</span>
+    </div>
+    <ul class="kv-list">
+      ${accountRow}
+      ${secretRow}
+      ${usageRow}
+    </ul>
+  `;
+
+  const copyButton = card.querySelector(".copy-secret");
+  if (copyButton) {
+    attachCopyHandler(copyButton);
+  }
+
+  if (currentUser?.role === "admin") {
+    const actions = document.createElement("div");
+    actions.className = "admin-user-actions";
+    actions.innerHTML = `
+      <button class="btn" type="button" data-action="edit-cred">Editar</button>
+      <button class="btn ghost danger" type="button" data-action="delete-cred">Eliminar</button>
+    `;
+    actions
+      .querySelector("[data-action='edit-cred']")
+      .addEventListener("click", () => openEditCredentialModal(cred));
+    actions
+      .querySelector("[data-action='delete-cred']")
+      .addEventListener("click", () => handleDeleteCredential(cred));
+    card.appendChild(actions);
+  }
+
+  return card;
+}
+
+async function loadCredentials() {
+  if (!dynamicCredsList) {
+    return;
+  }
+
+  dynamicCredsList.innerHTML = "";
+  setMessage(dynamicCredsMessage, "Cargando credenciales...");
+
+  try {
+    const response = await fetch("/api/credentials", {
+      method: "GET",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      setMessage(dynamicCredsMessage, data.error || "No fue posible cargar credenciales", true);
+      return;
+    }
+
+    if (!data.credentials.length) {
+      setMessage(
+        dynamicCredsMessage,
+        "Aun no hay credenciales. Un admin puede crearlas desde 'Crear Credencial de Acceso'."
+      );
+      return;
+    }
+
+    data.credentials.forEach((cred) => {
+      dynamicCredsList.appendChild(renderCredentialCard(cred));
+    });
+
+    setMessage(dynamicCredsMessage, "");
+    renderSecrets();
+    applySearch(searchInput.value || "");
+  } catch {
+    setMessage(dynamicCredsMessage, "Error de conexion al cargar credenciales", true);
+  }
+}
+
+async function handleCreateCredential(event) {
+  event.preventDefault();
+  setMessage(adminCredentialMessage, "Creando credencial...");
+
+  const formData = new FormData(adminCreateCredentialForm);
+  const payload = {
+    title: String(formData.get("title") || "").trim(),
+    account: String(formData.get("account") || "").trim(),
+    secret: String(formData.get("secret") || "").trim(),
+    usage: String(formData.get("usage") || "").trim(),
+    status: String(formData.get("status") || "ok").trim(),
+    chipLabel: String(formData.get("chipLabel") || "").trim(),
+    tags: String(formData.get("tags") || "").trim(),
+  };
+
+  try {
+    const response = await fetch("/api/credentials", {
+      method: "POST",
+      headers: mutationHeaders(),
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      setMessage(adminCredentialMessage, data.error || "No fue posible crear credencial", true);
+      return;
+    }
+
+    adminCreateCredentialForm.reset();
+    setMessage(adminCredentialMessage, "Credencial creada correctamente");
+    await loadCredentials();
+  } catch {
+    setMessage(adminCredentialMessage, "Error de conexion al crear credencial", true);
+  }
+}
+
+function openEditCredentialModal(cred) {
+  openModal(
+    "Editar credencial",
+    [
+      { name: "title", label: "Titulo", value: cred.title, required: true },
+      { name: "account", label: "Cuenta (correo o usuario)", value: cred.account },
+      { name: "secret", label: "Clave", value: cred.secret },
+      { name: "usage", label: "Uso", type: "textarea", value: cred.usage },
+      {
+        name: "status",
+        label: "Estado",
+        type: "select",
+        value: cred.status,
+        options: [
+          { value: "ok", label: "Activo" },
+          { value: "warn", label: "En Proceso" },
+          { value: "critical", label: "Critico" },
+        ],
+      },
+      { name: "chipLabel", label: "Etiqueta (chip)", value: cred.chipLabel },
+      { name: "tags", label: "Etiquetas (coma)", value: cred.tags },
+    ],
+    async (data, setMsg) => {
+      const response = await fetch("/api/credentials", {
+        method: "PATCH",
+        headers: mutationHeaders(),
+        credentials: "include",
+        body: JSON.stringify({ id: cred.id, ...data }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        setMsg(result.error || "No fue posible actualizar", true);
+        return false;
+      }
+      setMessage(dynamicCredsMessage, "Credencial actualizada");
+      await loadCredentials();
+      return true;
+    }
+  );
+}
+
+async function handleDeleteCredential(cred) {
+  if (!window.confirm(`Eliminar la credencial "${cred.title}"? Esta accion no se puede deshacer.`)) {
+    return;
+  }
+
+  setMessage(dynamicCredsMessage, "Eliminando credencial...");
+  try {
+    const response = await fetch("/api/credentials", {
+      method: "DELETE",
+      headers: mutationHeaders(),
+      credentials: "include",
+      body: JSON.stringify({ id: cred.id }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setMessage(dynamicCredsMessage, result.error || "No fue posible eliminar", true);
+      return;
+    }
+    setMessage(dynamicCredsMessage, "Credencial eliminada");
+    await loadCredentials();
+  } catch {
+    setMessage(dynamicCredsMessage, "Error de conexion al eliminar", true);
+  }
+}
+
 function statusTextFromCode(status) {
   if (status === "critical") {
     return "Critico";
   }
 
   if (status === "warn") {
-    return "Flujo";
+    return "En Proceso";
   }
 
   return "Activo";
@@ -257,6 +478,19 @@ function renderDynamicModuleCard(moduleItem) {
     </ul>
   `;
 
+  // Modulo de precargas: boton de acceso rapido a la documentacion (manual).
+  if ((moduleItem.tags || "").toLowerCase().includes("precargas")) {
+    const docActions = document.createElement("div");
+    docActions.className = "module-doc-actions";
+    const docButton = document.createElement("button");
+    docButton.className = "btn";
+    docButton.type = "button";
+    docButton.textContent = "Ver documentacion";
+    docButton.addEventListener("click", () => activateTab("precargas"));
+    docActions.appendChild(docButton);
+    card.appendChild(docActions);
+  }
+
   if (currentUser?.role === "admin") {
     const actions = document.createElement("div");
     actions.className = "admin-user-actions";
@@ -273,8 +507,133 @@ function renderDynamicModuleCard(moduleItem) {
     card.appendChild(actions);
   }
 
+  card.appendChild(buildModuleNotes(moduleItem));
+
   return card;
 }
+
+// Construye la seccion de notas de un modulo (persistentes, por usuario).
+function buildModuleNotes(moduleItem) {
+  const wrap = document.createElement("div");
+  wrap.className = "module-notes";
+  wrap.innerHTML = `
+    <div class="module-notes-head">Notas del equipo</div>
+    <div class="module-notes-list" aria-live="polite"><p class="module-note-msg">Cargando notas...</p></div>
+    <form class="module-note-form">
+      <textarea name="content" rows="2" placeholder="Escribe una nota para el equipo..." required></textarea>
+      <button class="btn" type="submit">Agregar nota</button>
+      <p class="module-note-msg form-msg" aria-live="polite"></p>
+    </form>
+  `;
+
+  const list = wrap.querySelector(".module-notes-list");
+  const form = wrap.querySelector(".module-note-form");
+  const formMsg = wrap.querySelector(".form-msg");
+
+  loadModuleNotes(moduleItem.id, list);
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const textarea = form.querySelector("textarea");
+    const content = textarea.value.trim();
+    if (!content) {
+      return;
+    }
+
+    setMessage(formMsg, "Guardando...");
+    try {
+      const response = await fetch("/api/notes", {
+        method: "POST",
+        headers: mutationHeaders(),
+        credentials: "include",
+        body: JSON.stringify({ moduleId: moduleItem.id, content }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        setMessage(formMsg, result.error || "No fue posible guardar la nota", true);
+        return;
+      }
+      textarea.value = "";
+      setMessage(formMsg, "");
+      await loadModuleNotes(moduleItem.id, list);
+    } catch {
+      setMessage(formMsg, "Error de conexion al guardar", true);
+    }
+  });
+
+  return wrap;
+}
+
+function renderModuleNote(note, moduleId, list) {
+  const item = document.createElement("div");
+  item.className = "module-note";
+
+  const date = note.createdAt ? new Date(note.createdAt).toLocaleString() : "";
+  const canDelete =
+    currentUser &&
+    (currentUser.role === "admin" || Number(note.userId) === Number(currentUser.id));
+
+  item.innerHTML = `
+    <p class="module-note-meta"><strong>${escapeHtml(note.authorName || "Usuario")}</strong> <span>${escapeHtml(date)}</span></p>
+    <p class="module-note-content">${escapeHtml(note.content)}</p>
+  `;
+
+  if (canDelete) {
+    const delButton = document.createElement("button");
+    delButton.className = "mini";
+    delButton.type = "button";
+    delButton.textContent = "Eliminar";
+    delButton.addEventListener("click", async () => {
+      if (!window.confirm("Eliminar esta nota?")) {
+        return;
+      }
+      try {
+        const response = await fetch("/api/notes", {
+          method: "DELETE",
+          headers: mutationHeaders(),
+          credentials: "include",
+          body: JSON.stringify({ id: note.id }),
+        });
+        if (response.ok) {
+          await loadModuleNotes(moduleId, list);
+        }
+      } catch {
+        /* silencioso */
+      }
+    });
+    item.appendChild(delButton);
+  }
+
+  return item;
+}
+
+async function loadModuleNotes(moduleId, list) {
+  list.innerHTML = `<p class="module-note-msg">Cargando notas...</p>`;
+  try {
+    const response = await fetch(`/api/notes?moduleId=${encodeURIComponent(moduleId)}`, {
+      method: "GET",
+      credentials: "include",
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      list.innerHTML = `<p class="module-note-msg error">${escapeHtml(data.error || "No fue posible cargar notas")}</p>`;
+      return;
+    }
+
+    if (!data.notes.length) {
+      list.innerHTML = `<p class="module-note-msg">Aun no hay notas.</p>`;
+      return;
+    }
+
+    list.innerHTML = "";
+    data.notes.forEach((note) => {
+      list.appendChild(renderModuleNote(note, moduleId, list));
+    });
+  } catch {
+    list.innerHTML = `<p class="module-note-msg error">Error de conexion al cargar notas.</p>`;
+  }
+}
+
 
 function openEditModuleModal(moduleItem) {
   openModal(
@@ -316,7 +675,7 @@ function openEditModuleModal(moduleItem) {
         value: moduleItem.status,
         options: [
           { value: "ok", label: "Activo" },
-          { value: "warn", label: "Flujo" },
+          { value: "warn", label: "En Proceso" },
           { value: "critical", label: "Critico" },
         ],
       },
@@ -447,7 +806,7 @@ async function handleCreateModule(event) {
 }
 
 function renderSecrets() {
-  secrets.forEach((secret) => {
+  document.querySelectorAll(".secret").forEach((secret) => {
     const raw = secret.dataset.secret || "";
     if (secretsVisible) {
       secret.textContent = raw;
@@ -544,6 +903,7 @@ function createUserRow(user) {
       <button class="btn" type="button" data-action="toggle" data-id="${user.id}" data-next-active="${String(!user.isActive)}">${toggleText}</button>
       <button class="btn" type="button" data-action="edit">Editar</button>
       <button class="btn ghost" type="button" data-action="reset">Resetear clave</button>
+      <button class="btn ghost danger" type="button" data-action="delete">Eliminar</button>
     </div>
   `;
 
@@ -553,6 +913,9 @@ function createUserRow(user) {
   item
     .querySelector("[data-action='reset']")
     .addEventListener("click", () => openResetPasswordModal(user));
+  item
+    .querySelector("[data-action='delete']")
+    .addEventListener("click", () => handleDeleteUser(user));
 
   const toggleButton = item.querySelector("button[data-action='toggle']");
   toggleButton.addEventListener("click", async () => {
@@ -660,6 +1023,35 @@ async function handleCreateUser(event) {
     await loadUsers();
   } catch {
     setMessage(adminCreateMessage, "Error de conexion al crear usuario", true);
+  }
+}
+
+async function handleDeleteUser(user) {
+  if (
+    !window.confirm(
+      `Eliminar permanentemente al usuario "${user.displayName}" (${user.email})? Esta accion no se puede deshacer.`
+    )
+  ) {
+    return;
+  }
+
+  setMessage(adminUsersMessage, "Eliminando usuario...");
+  try {
+    const response = await fetch("/api/users", {
+      method: "DELETE",
+      headers: mutationHeaders(),
+      credentials: "include",
+      body: JSON.stringify({ userId: user.id }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setMessage(adminUsersMessage, result.error || "No fue posible eliminar", true);
+      return;
+    }
+    setMessage(adminUsersMessage, "Usuario eliminado");
+    await loadUsers();
+  } catch {
+    setMessage(adminUsersMessage, "Error de conexion al eliminar", true);
   }
 }
 
@@ -792,21 +1184,7 @@ logoutBtn.addEventListener("click", async () => {
 });
 
 copyButtons.forEach((button) => {
-  button.addEventListener("click", async () => {
-    const value = button.dataset.copy || "";
-    try {
-      await navigator.clipboard.writeText(value);
-      button.textContent = "Copiado";
-      setTimeout(() => {
-        button.textContent = "Copiar";
-      }, 1100);
-    } catch {
-      button.textContent = "No disponible";
-      setTimeout(() => {
-        button.textContent = "Copiar";
-      }, 1100);
-    }
-  });
+  attachCopyHandler(button);
 });
 
 checkboxes.forEach((input) => {
@@ -835,6 +1213,10 @@ if (adminUserSearchInput) {
 
 if (adminCreateModuleForm) {
   adminCreateModuleForm.addEventListener("submit", handleCreateModule);
+}
+
+if (adminCreateCredentialForm) {
+  adminCreateCredentialForm.addEventListener("submit", handleCreateCredential);
 }
 
 if (changePasswordBtn) {
@@ -866,6 +1248,8 @@ async function init() {
   renderSecrets();
   updateStats();
   await loadModules();
+  await loadCredentials();
+  updateStats();
 
   if (isAdmin) {
     await loadUsers();

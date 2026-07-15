@@ -25,8 +25,13 @@ function mapUser(row) {
 }
 
 module.exports = async function handler(req, res) {
-  if (req.method !== "GET" && req.method !== "POST" && req.method !== "PATCH") {
-    return notAllowed(res, "GET, POST, PATCH");
+  if (
+    req.method !== "GET" &&
+    req.method !== "POST" &&
+    req.method !== "PATCH" &&
+    req.method !== "DELETE"
+  ) {
+    return notAllowed(res, "GET, POST, PATCH, DELETE");
   }
 
   try {
@@ -121,6 +126,34 @@ module.exports = async function handler(req, res) {
     const userId = Number(body.userId);
     if (!Number.isInteger(userId) || userId <= 0) {
       return sendJson(res, 400, { error: "userId invalido" });
+    }
+
+    if (req.method === "DELETE") {
+      if (userId === Number(adminUser.id)) {
+        return sendJson(res, 400, { error: "No puedes eliminar tu propio usuario" });
+      }
+
+      try {
+        const result = await query(
+          `DELETE FROM users WHERE id = $1 RETURNING id, email`,
+          [userId]
+        );
+
+        if (!result.rows.length) {
+          return sendJson(res, 404, { error: "Usuario no encontrado" });
+        }
+
+        writeAudit(adminUser, "user.delete", `user:${userId}`, `email:${result.rows[0].email}`);
+        return sendJson(res, 200, { ok: true, deletedId: userId });
+      } catch (deleteError) {
+        if (deleteError && deleteError.code === "23503") {
+          return sendJson(res, 409, {
+            error:
+              "No se puede eliminar: el usuario tiene modulos u otros registros asociados. Reasignalos o usa 'Inactivar'.",
+          });
+        }
+        throw deleteError;
+      }
     }
 
     const action =

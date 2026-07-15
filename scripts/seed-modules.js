@@ -83,6 +83,18 @@ const DEFAULT_MODULES = [
     status: "ok",
     tags: "precargas almera worker vercel estudiantes encuestas procesos combinar subir proyecto",
   },
+  {
+    title: "Capacitacion Tutores y Asesores",
+    description:
+      "Modulo para capacitar a tutores y asesores que usan Almera y las hojas de calculo donde estan las bases de datos de estudiantes y docentes. Cubre acceso, buen manejo de datos y flujo operativo.",
+    link_url: "https://sgi.almeraim.com/sgi/seguimiento/?nosgim&c=sgifunluker",
+    link_text: "Abrir Almera SGI",
+    detail_label: "Dirigido a",
+    detail_value: "Tutores y asesores (Almera + hojas de calculo de estudiantes y docentes).",
+    usage: "Guiar la capacitacion en acceso, manejo de datos y uso de hojas de calculo.",
+    status: "warn",
+    tags: "capacitacion tutores asesores almera hojas calculo estudiantes docentes formacion",
+  },
 ];
 
 async function main() {

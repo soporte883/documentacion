@@ -310,9 +310,18 @@ body {
 }
 
 #modulos.tab-panel.active,
-#accesos.tab-panel.active,
 #admin.tab-panel.active {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+#accesos.tab-panel.active {
+  grid-template-columns: 1fr;
+}
+
+.creds-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
 }
 
 #procesos.tab-panel.active,
@@ -322,6 +331,20 @@ body {
 
 #precargas.tab-panel.active {
   grid-template-columns: 1fr;
+}
+
+.module-group-title {
+  margin: 14px 0 2px;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 6px;
+}
+
+.module-group-title:first-child {
+  margin-top: 0;
 }
 
 .card,
@@ -405,6 +428,103 @@ body {
   margin-bottom: 8px;
   color: var(--muted);
   font-size: 0.92rem;
+}
+
+.module-doc-actions {
+  margin-top: 10px;
+}
+
+.module-notes {
+  margin-top: 12px;
+  border-top: 1px dashed var(--line);
+  padding-top: 10px;
+}
+
+.module-notes-head {
+  font-family: var(--font-display);
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.module-notes-list {
+  display: grid;
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.module-note {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: color-mix(in srgb, var(--card) 88%, #ffffff 12%);
+  position: relative;
+}
+
+.module-note-meta {
+  margin: 0 0 4px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.module-note-content {
+  margin: 0;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.module-note .mini {
+  margin: 6px 0 0;
+}
+
+.module-note-form {
+  margin-top: 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.module-note-form textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px;
+  resize: vertical;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--card) 82%, #ffffff 18%);
+}
+
+.module-note-form .btn {
+  justify-self: start;
+}
+
+.module-note-msg {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  min-height: 16px;
+}
+
+.module-note-msg.error {
+  color: #8c1d1d;
+}
+
+.btn.danger {
+  color: var(--critical);
+  border-color: color-mix(in srgb, var(--critical) 45%, transparent);
+}
+
+.btn.danger:hover {
+  background: rgba(190, 45, 45, 0.1);
 }
 
 .dynamic-modules-wrap {
