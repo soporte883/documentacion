@@ -12,6 +12,8 @@
   --critical: #be2d2d;
   --shadow: 0 20px 40px rgba(23, 32, 26, 0.1);
   --glow: rgba(31, 111, 82, 0.24);
+  --kpi-soft: rgba(31, 111, 82, 0.06);
+  --kpi-strong: rgba(31, 111, 82, 0.14);
 }
 
 body.theme-dark {
@@ -26,6 +28,8 @@ body.theme-dark {
   --critical: #ef9d9d;
   --shadow: 0 20px 42px rgba(0, 0, 0, 0.42);
   --glow: rgba(88, 179, 149, 0.24);
+  --kpi-soft: rgba(88, 179, 149, 0.1);
+  --kpi-strong: rgba(88, 179, 149, 0.22);
 }
 
 * {
@@ -307,6 +311,7 @@ body {
   animation: panel-in 240ms ease-out both;
   align-content: start;
   padding-top: 4px;
+  gap: 14px;
 }
 
 #modulos.tab-panel.active,
@@ -376,6 +381,9 @@ body {
   transition: transform 0.2s ease;
   position: relative;
   overflow: hidden;
+  display: grid;
+  align-content: start;
+  gap: 8px;
 }
 
 .card:hover,
@@ -399,13 +407,16 @@ body {
   gap: 12px;
   align-items: flex-start;
   flex-wrap: wrap;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--line);
 }
 
 .card-head h3 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 0.98rem;
-  letter-spacing: -0.015em;
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
   line-height: 1.32;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -445,9 +456,9 @@ body {
 }
 
 .module-card p {
-  margin-bottom: 8px;
+  margin: 0;
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
 }
 
 .module-doc-actions {
@@ -605,10 +616,12 @@ body {
 }
 
 .chip {
-  padding: 4px 10px;
+  padding: 5px 10px;
   border-radius: 999px;
-  font-size: 0.74rem;
-  font-weight: 600;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   border: 1px solid transparent;
   flex-shrink: 0;
 }
@@ -630,7 +643,7 @@ body {
 
 .notes {
   width: 100%;
-  margin-top: 10px;
+  margin-top: 6px;
   border: 1px solid var(--line);
   border-radius: 10px;
   min-height: 72px;
@@ -643,15 +656,33 @@ body {
 }
 
 .kv-list {
-  margin: 10px 0 0;
-  padding-left: 18px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 8px;
 }
 
 .kv-list li {
-  margin-bottom: 7px;
-  font-size: 0.92rem;
+  margin: 0;
+  font-size: 0.88rem;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: linear-gradient(140deg, color-mix(in srgb, var(--kpi-soft) 70%, transparent), transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--kpi-strong) 35%, transparent);
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+.kv-list li strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
 }
 
 .secret {
@@ -741,6 +772,24 @@ body {
   margin: 6px 0 0;
   color: var(--muted);
   font-size: 0.84rem;
+}
+
+#procesos .card ol,
+#incidentes .card ol,
+#precargas .card ol {
+  margin: 2px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 7px;
+}
+
+#procesos .card ol li,
+#incidentes .card ol li,
+#precargas .card ol li {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--kpi-soft) 70%, transparent);
 }
 
 .step-flow {
@@ -1148,6 +1197,10 @@ body.theme-dark .admin-message.error {
   #incidentes .card,
   #precargas .card {
     max-height: none;
+  }
+
+  .kv-list {
+    grid-template-columns: 1fr;
   }
 }
 
