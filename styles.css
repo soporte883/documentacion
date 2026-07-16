@@ -322,9 +322,13 @@ body {
   gap: 14px;
 }
 
-#modulos.tab-panel.active,
-#admin.tab-panel.active {
+#modulos.tab-panel.active {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+#admin.tab-panel.active {
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  align-items: start;
 }
 
 #accesos.tab-panel.active {
@@ -984,6 +988,8 @@ body {
   margin-top: 10px;
   display: grid;
   gap: 8px;
+  width: 100%;
+  min-width: 0;
 }
 
 /* Limita la altura de los formularios del panel admin para emparejar tarjetas */
@@ -999,11 +1005,21 @@ body {
 }
 
 .admin-form input,
-.admin-form select {
+.admin-form select,
+.admin-form textarea {
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 10px 12px;
   font: inherit;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.admin-form .btn {
+  width: 100%;
+  justify-self: stretch;
 }
 
 .admin-message {
