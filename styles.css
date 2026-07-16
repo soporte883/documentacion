@@ -405,10 +405,16 @@ body {
   gap: 8px;
 }
 
-/* Evita que numeraciones y controles en admin/precargas queden recortados. */
-#admin .card,
+/* Evita que numeraciones y controles en precargas queden recortados. */
 #precargas .card {
   overflow: visible;
+}
+
+/* Tarjetas del panel admin: misma altura y contenido con scroll interno. */
+#admin .card {
+  height: 520px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .card:hover,
@@ -1101,6 +1107,7 @@ body {
 .dynamic-modules-list::-webkit-scrollbar,
 .accordion-content::-webkit-scrollbar,
 #admin .admin-form::-webkit-scrollbar,
+#admin .card::-webkit-scrollbar,
 .admin-users-list::-webkit-scrollbar {
   width: 8px;
 }
@@ -1108,6 +1115,7 @@ body {
 .dynamic-modules-list::-webkit-scrollbar-thumb,
 .accordion-content::-webkit-scrollbar-thumb,
 #admin .admin-form::-webkit-scrollbar-thumb,
+#admin .card::-webkit-scrollbar-thumb,
 .admin-users-list::-webkit-scrollbar-thumb {
   background: color-mix(in srgb, var(--accent) 45%, transparent);
   border-radius: 999px;
@@ -1116,6 +1124,7 @@ body {
 .dynamic-modules-list,
 .accordion-content,
 #admin .admin-form,
+#admin .card,
 .admin-users-list {
   scrollbar-color: color-mix(in srgb, var(--accent) 45%, transparent) transparent;
   scrollbar-width: thin;
