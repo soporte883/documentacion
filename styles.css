@@ -851,6 +851,12 @@ body {
   background: linear-gradient(130deg, rgba(255, 255, 255, 0.95), rgba(230, 236, 220, 0.55));
 }
 
+#procesos .card ol.step-flow li,
+#incidentes .card ol.step-flow li,
+#precargas .card ol.step-flow li {
+  padding: 8px 10px 8px 42px;
+}
+
 .step-flow li::before {
   content: counter(runbookStep);
   position: absolute;
@@ -1017,7 +1023,7 @@ body {
   border-radius: 12px;
   padding: 10px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: 1fr;
   gap: 10px;
   align-items: start;
   background: rgba(255, 255, 255, 0.92);
@@ -1028,16 +1034,26 @@ body {
   margin: 2px 0;
   color: var(--muted);
   font-size: 0.9rem;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .admin-user-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   flex-shrink: 0;
+}
+
+.admin-user-item > div:first-child {
+  min-width: 0;
+}
+
+.admin-user-item > div:first-child strong {
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .dynamic-modules-list::-webkit-scrollbar,
