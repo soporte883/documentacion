@@ -1021,21 +1021,38 @@ body {
 .admin-user-item {
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 10px;
-  display: grid;
-  grid-template-columns: 1fr;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
-  align-items: start;
+  align-items: stretch;
   background: rgba(255, 255, 255, 0.92);
+  width: 100%;
   min-width: 0;
 }
 
-.admin-user-item p {
-  margin: 2px 0;
-  color: var(--muted);
-  font-size: 0.9rem;
+.admin-user-item > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  width: 100%;
+}
+
+.admin-user-item > div:first-child strong {
+  font-size: 1rem;
   overflow-wrap: break-word;
   word-break: normal;
+  white-space: normal;
+}
+
+.admin-user-item p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  overflow-wrap: break-word;
+  word-break: normal;
+  white-space: normal;
 }
 
 .admin-user-actions {
@@ -1044,16 +1061,18 @@ body {
   gap: 8px;
   justify-content: flex-start;
   align-items: center;
-  flex-shrink: 0;
-}
-
-.admin-user-item > div:first-child {
+  width: 100%;
   min-width: 0;
 }
 
-.admin-user-item > div:first-child strong {
-  overflow-wrap: break-word;
-  word-break: normal;
+.admin-user-actions .chip {
+  order: -1;
+}
+
+.admin-user-actions .btn {
+  padding: 7px 12px;
+  font-size: 0.82rem;
+  white-space: nowrap;
 }
 
 .dynamic-modules-list::-webkit-scrollbar,
@@ -1230,8 +1249,7 @@ body.theme-dark .admin-message.error {
   }
 
   .admin-user-item {
-    grid-template-columns: 1fr;
-    align-items: start;
+    padding: 10px 12px;
   }
 
   .admin-user-actions {
