@@ -370,6 +370,13 @@ body {
   overflow-y: auto;
 }
 
+/* En Precargas se prioriza lectura completa sin cortes de contenido. */
+#precargas .card {
+  max-height: none;
+  overflow-y: visible;
+  overflow: visible;
+}
+
 /* Las tarjetas con notas de usuario deben quedar completas (sin recorte). */
 #procesos .card.user-notes-card {
   max-height: none;
@@ -392,6 +399,12 @@ body {
   display: grid;
   align-content: start;
   gap: 8px;
+}
+
+/* Evita que numeraciones y controles en admin/precargas queden recortados. */
+#admin .card,
+#precargas .card {
+  overflow: visible;
 }
 
 .card:hover,
@@ -962,9 +975,9 @@ body {
 
 /* Limita la altura de los formularios del panel admin para emparejar tarjetas */
 #admin .admin-form {
-  max-height: 48vh;
-  overflow-y: auto;
-  padding-right: 6px;
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
 }
 
 .admin-form label {
@@ -994,19 +1007,19 @@ body {
   margin-top: 10px;
   display: grid;
   gap: 10px;
-  max-height: 46vh;
-  overflow-y: auto;
-  padding-right: 6px;
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
 }
 
 .admin-user-item {
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 10px;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
-  align-items: center;
+  align-items: start;
   background: rgba(255, 255, 255, 0.92);
   min-width: 0;
 }
@@ -1019,9 +1032,11 @@ body {
 }
 
 .admin-user-actions {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
-  justify-items: end;
+  justify-content: flex-end;
+  align-items: center;
   flex-shrink: 0;
 }
 
@@ -1199,12 +1214,12 @@ body.theme-dark .admin-message.error {
   }
 
   .admin-user-item {
-    flex-direction: column;
-    align-items: flex-start;
+    grid-template-columns: 1fr;
+    align-items: start;
   }
 
   .admin-user-actions {
-    justify-items: start;
+    justify-content: flex-start;
   }
 
   .theme-floating {
