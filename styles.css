@@ -441,6 +441,13 @@ body {
   line-height: 1.32;
   overflow-wrap: anywhere;
   word-break: break-word;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.card-head .btn,
+.card-head .chip {
+  flex: 0 0 auto;
 }
 
 /* Evita que textos largos (correos, URLs, valores) se salgan de las tarjetas */
